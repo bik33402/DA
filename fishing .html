@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pond Master — Realistic Fishing Challenge</title>
+<style>
+  :root { color-scheme: dark; --panel: rgba(9,25,34,.86); --line: rgba(219,241,245,.22); --accent:#f2c879; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background:linear-gradient(#152d35,#07191f); color:#f4f7f4; min-height:100vh; }
+  .wrap { width:min(1100px,100%); margin:auto; padding:16px; }
+  header { display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; }
+  h1 { font-size:clamp(1.35rem,3vw,2rem); margin:0; letter-spacing:.02em; }
+  .subtitle { color:#b9cdd0; font-size:.9rem; margin-top:3px; }
+  .stats { display:flex; gap:8px; flex-wrap:wrap; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:8px 13px; min-width:90px; }
+  .stat span { display:block; color:#b9cdd0; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; }
+  .stat strong { font-size:1.2rem; font-variant-numeric:tabular-nums; }
+  .game-shell { position:relative; border:1px solid #59716e; border-radius:18px; overflow:hidden; box-shadow:0 18px 55px #0006; background:#163a3d; }
+  canvas { display:block; width:100%; height:auto; aspect-ratio: 16 / 9; touch-action:none; cursor:crosshair; }
+  .overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:18px; background:rgba(3,15,19,.62); backdrop-filter:blur(3px); }
+  .overlay.hidden { display:none; }
+  .dialog { max-width:470px; width:100%; padding:24px; text-align:center; border:1px solid #a6c0b9; border-radius:18px; background:rgba(9,28,34,.95); box-shadow:0 12px 35px #0008; }
+  .dialog h2 { margin:0 0 8px; font-size:1.7rem; }
+  .dialog p { color:#d0dfdc; line-height:1.5; }
+  .btn { border:0; border-radius:10px; padding:11px 17px; font-weight:750; color:#1d2927; background:var(--accent); cursor:pointer; font-size:.95rem; }
+  .btn:hover { filter:brightness(1.08); transform:translateY(-1px); }
+  .btn:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+  .btn.secondary { background:#c7d8d6; }
+  .controls { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; margin-top:12px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:13px 15px; }
+  .panel h3 { margin:0 0 8px; font-size:1rem; }
+  .panel p { margin:5px 0; color:#c5d7d4; font-size:.88rem; line-height:1.45; }
+  .actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .rodline { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
+  .message { min-height:1.35em; color:#f2d59a!important; font-weight:650; }
+  .legend { display:flex; gap:12px; flex-wrap:wrap; font-size:.8rem; color:#d2e0dc; margin-top:8px; }
+  .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+  footer { text-align:center; color:#9bb3b4; font-size:.78rem; padding:15px 0 5px; }
+  @media(max-width:650px) { .controls { grid-template-columns:1fr; } .wrap {padding:10px;} .stat {min-width:75px;padding:7px 10px;} .stat strong{font-size:1rem;} .dialog{padding:18px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🎣 Pond Master</h1>
+      <div class="subtitle">Realistic Fishing Challenge · Aim carefully. Choose your catch. Beat the clock.</div>
+    </div>
+    <div class="stats" aria-live="polite">
+      <div class="stat"><span>Time left</span><strong id="time">60</strong></div>
+      <div class="stat"><span>Score</span><strong id="score">0</strong></div>
+      <div class="stat"><span>Best</span><strong id="best">0</strong></div>
+      <div class="stat"><span>Fish caught</span><strong id="caught">0</strong></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="game-shell">
+      <canvas id="pond" width="960" height="540" aria-label="Fishing pond game. Move the pointer to aim and click to cast."></canvas>
+      <div class="overlay" id="startOverlay">
+        <div class="dialog">
+          <h2>Ready to fish?</h2>
+          <p>You have <b>60 seconds</b> to catch fish. Small fish are worth 5 points, medium fish 10, and rare fish 25. Miss or hit an obstacle and lose 2 seconds.</p>
+          <p><b>How to play:</b> Move your mouse or finger to aim, then click or tap to cast. Earn points to unlock stronger rods.</p>
+          <button class="btn" id="startBtn">Start fishing</button>
+        </div>
+      </div>
+      <div class="overlay hidden" id="endOverlay">
+        <div class="dialog">
+          <h2 id="endTitle">Time's up!</h2>
+          <p id="endSummary"></p>
+          <p id="endBest"></p>
+          <button class="btn" id="restartBtn">Fish again</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <section class="panel">
+        <div class="rodline">
+          <div>
+            <h3>Fishing equipment</h3>
+            <p id="rodLabel">Level 1 — Basic Rod</p>
+          </div>
+          <button class="btn" id="upgradeBtn" disabled>Upgrade</button>
+        </div>
+        <p id="upgradeInfo">Reach 50 points and have 30 points to buy the Improved Rod.</p>
+        <p class="message" id="message" aria-live="polite">Aim at a fish and cast!</p>
+      </section>
+      <section class="panel">
+        <h3>Catch guide</h3>
+        <p><span class="dot" style="background:#d6b37b"></span>Small fish · 5 pts &nbsp; <span class="dot" style="background:#8eb7aa"></span>Medium fish · 10 pts &nbsp; <span class="dot" style="background:#e8a16c"></span>Rare fish · 25 pts</p>
+        <p>Rocks and plants block casts. Rod upgrades extend your reach and help you access fish behind some obstacles.</p>
+        <div class="legend"><span>🖱️ Mouse: aim + click</span><span>📱 Touch: drag to aim + tap to cast</span></div>
+      </section>
+    </div>
+  </main>
+  <footer>One-file browser game · Your best score is saved on this device.</footer>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('pond');
+  const ctx = canvas.getContext('2d');
+  const $ = id => document.getElementById(id);
+  const ui = {
+    time:$('time'), score:$('score'), best:$('best'), caught:$('caught'),
+    message:$('message'), rodLabel:$('rodLabel'), upgradeBtn:$('upgradeBtn'), upgradeInfo:$('upgradeInfo'),
+    startOverlay:$('startOverlay'), endOverlay:$('endOverlay'), endTitle:$('endTitle'),
+    endSummary:$('endSummary'), endBest:$('endBest')
+  };
+  const W = canvas.width, H = canvas.height;
+  let running = false, ended = false, lastFrame = 0, remaining = 60, score = 0, peakScore = 0, caught = 0;
+  let rodLevel = 1, highestFishValue = 0, best = 0, aim = {x:550,y:280}, castLine = null, castCooldown = 0, particles = [];
+  let lastTimePenalty = 0;
+  try { best = Number(localStorage.getItem('pondMasterBest') || 0); } catch(e) {}
+  ui.best.textContent = best;
+
+  const fisherman = {x:110,y:420};
+  const rods = [
+    {name:'Basic Rod', range:250, cost:0, threshold:0},
+    {name:'Improved Rod', range:360, cost:30, threshold:50},
+    {name:'Advanced Rod', range:470, cost:60, threshold:100}
+  ];
+  const fishTypes = [
+    {kind:'Small', value:5, color:'#d6b37b', size:10, speed:25, turn:0.8},
+    {kind:'Medium', value:10, color:'#8eb7aa', size:14, speed:42, turn:1.2},
+    {kind:'Rare', value:25, color:'#e8a16c', size:16, speed:59, turn:1.8}
+  ];
+  let fish = [];
+  const obstacles = [
+    {type:'rock',x:355,y:245,rx:48,ry:24},
+    {type:'rock',x:610,y:365,rx:58,ry:28},
+    {type:'plant',x:465,y:360,rx:25,ry:38},
+    {type:'plant',x:770,y:205,rx:27,ry:40},
+    {type:'rock',x:805,y:420,rx:40,ry:22},
+    {type:'plant',x:260,y:180,rx:20,ry:34}
+  ];
+  function rand(min,max){ return min+Math.random()*(max-min); }
+  function newFish(typeIndex, x, y) {
+    const t=fishTypes[typeIndex];
+    return {typeIndex, x:x ?? rand(205,900), y:y ?? rand(135,470), dir:Math.random()<.5?-1:1,
+      angle:rand(0,Math.PI*2), turnTimer:rand(.4,2.2), alive:true, hidden:Math.random()<.12};
+  }
+  function populateFish(){
+    fish=[];
+    for(let i=0;i<8;i++) fish.push(newFish(0));
+    for(let i=0;i<6;i++) fish.push(newFish(1));
+    for(let i=0;i<3;i++) fish.push(newFish(2));
+  }
+  populateFish();
+
+  function resetRound(){
+    running=false; ended=false; remaining=60; score=0; peakScore=0; caught=0; rodLevel=1; highestFishValue=0;
+    castLine=null; castCooldown=0; particles=[]; populateFish();
+    aim={x:540,y:270};
+    ui.time.textContent='60'; ui.score.textContent='0'; ui.caught.textContent='0';
+    ui.startOverlay.classList.remove('hidden'); ui.endOverlay.classList.add('hidden');
+    ui.message.textContent='Aim at a fish and cast!';
+    updateUpgrade();
+    draw();
+  }
+  function startGame(){
+    if(ended) resetRound();
+    running=true; ended=false; lastFrame=performance.now();
+    ui.startOverlay.classList.add('hidden'); ui.endOverlay.classList.add('hidden');
+    ui.message.textContent='Good luck! Aim for a fish.';
+    requestAnimationFrame(loop);
+  }
+  function finishGame(){
+    running=false; ended=true; remaining=0; ui.time.textContent='0';
+    let newBest=false;
+    if(score>best){ best=score; newBest=true; try{localStorage.setItem('pondMasterBest',String(best));}catch(e){} }
+    ui.best.textContent=best;
+    ui.endTitle.textContent=newBest?'New best score!':'Time is up!';
+    ui.endSummary.textContent=`Final score: ${score} points · Fish caught: ${caught} · Highest-value catch: ${highestFishValue} points · Highest rod: Level ${rodLevel}.`;
+    ui.endBest.textContent=newBest?'Your best score has been saved on this device.':`Your best score is ${best}. Can you beat it?`;
+    ui.endOverlay.classList.remove('hidden');
+    draw();
+  }
+  function updateUpgrade(){
+    const next=rods[rodLevel];
+    ui.rodLabel.textContent=`Level ${rodLevel} — ${rods[rodLevel-1].name}`;
+    if(!next){ ui.upgradeBtn.textContent='Max level'; ui.upgradeBtn.disabled=true; ui.upgradeInfo.textContent='You have the best available rod.'; return; }
+    ui.upgradeBtn.textContent=`Upgrade · ${next.cost} pts`;
+    ui.upgradeBtn.disabled=!(running && peakScore>=next.threshold && score>=next.cost);
+    ui.upgradeInfo.textContent=`Reach ${next.threshold} points in this round and spend ${next.cost} current points to unlock the ${next.name}.`;
+  }
+  function upgrade(){
+    const next=rods[rodLevel];
+    if(!running || !next || peakScore<next.threshold || score<next.cost) return;
+    score-=next.cost; rodLevel++; ui.score.textContent=score;
+    ui.message.textContent=`${rods[rodLevel-1].name} unlocked! Your casting range increased.`;
+    burst(fisherman.x+35,fisherman.y-35,'#f2c879',16);
+    updateUpgrade();
+  }
+  function cast(){
+    if(!running || castCooldown>0) return;
+    castCooldown=.45;
+    const from={x:fisherman.x+35,y:fisherman.y-50};
+    const dx=aim.x-from.x, dy=aim.y-from.y;
+    const dist=Math.hypot(dx,dy);
+    const maxRange=rods[rodLevel-1].range;
+    const target={x:aim.x,y:aim.y};
+    castLine={from,to:target,life:.42,hit:false};
+    if(dist>maxRange){
+      failCast('Too far! This rod cannot reach that spot.');
+      return;
+    }
+    const blocked=obstacles.some(o=>segmentEllipse(from,target,o));
+    if(blocked){
+      failCast('Blocked by an obstacle! −2 seconds.');
+      return;
+    }
+    let targetFish=null, bestD=Infinity;
+    for(const f of fish){
+      if(!f.alive) continue;
+      const t=fishTypes[f.typeIndex];
+      const d=Math.hypot(f.x-aim.x,f.y-aim.y);
+      if(d<t.size+20 && d<bestD){ targetFish=f; bestD=d; }
+    }
+    if(!targetFish){
+      failCast('Missed! The cast cost 2 seconds.');
+      return;
+    }
+    const t=fishTypes[targetFish.typeIndex];
+    targetFish.alive=false;
+    score+=t.value; peakScore=Math.max(peakScore,score); caught++; highestFishValue=Math.max(highestFishValue,t.value);
+    ui.score.textContent=score; ui.caught.textContent=caught;
+    ui.message.textContent=`Caught a ${t.kind.toLowerCase()} fish! +${t.value} points.`;
+    burst(targetFish.x,targetFish.y,t.color,12);
+    setTimeout(()=>{ if(running) fish.push(newFish(targetFish.typeIndex)); },850);
+    updateUpgrade();
+  }
+  function failCast(msg){
+    remaining=Math.max(0,remaining-2); ui.time.textContent=Math.ceil(remaining);
+    ui.message.textContent=msg;
+    if(remaining<=0) finishGame();
+  }
+  function segmentEllipse(a,b,o){
+    // Sample points along the cast segment for simple and reliable obstacle collision.
+    for(let i=1;i<=35;i++){
+      const t=i/36, x=a.x+(b.x-a.x)*t, y=a.y+(b.y-a.y)*t;
+      if(o.type==='rock'){
+        if(((x-o.x)*(x-o.x))/(o.rx*o.rx)+((y-o.y)*(y-o.y))/(o.ry*o.ry)<1) return true;
+      } else {
+        if(Math.abs(x-o.x)<o.rx && Math.abs(y-o.y)<o.ry) return true;
+      }
+    }
+    return false;
+  }
+  function burst(x,y,color,n){
+    for(let i=0;i<n;i++) particles.push({x,y,vx:rand(-55,55),vy:rand(-75,15),life:rand(.35,.8),max:.8,color});
+  }
+  function update(dt){
+    remaining-=dt;
+    if(remaining<=0){finishGame();return;}
+    ui.time.textContent=Math.ceil(remaining);
+    castCooldown=Math.max(0,castCooldown-dt);
+    if(castLine){ castLine.life-=dt; if(castLine.life<=0) castLine=null; }
+    for(const f of fish){
+      if(!f.alive) continue;
+      f.turnTimer-=dt;
+      if(f.turnTimer<=0){ f.angle+=rand(-1.4,1.4); f.turnTimer=rand(.5,2.4); }
+      const t=fishTypes[f.typeIndex];
+      f.x+=Math.cos(f.angle)*t.speed*dt;
+      f.y+=Math.sin(f.angle)*t.speed*.56*dt;
+      if(f.x<185||f.x>925){f.angle=Math.PI-f.angle;f.x=Math.max(185,Math.min(925,f.x));}
+      if(f.y<120||f.y>495){f.angle=-f.angle;f.y=Math.max(120,Math.min(495,f.y));}
+    }
+    for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=100*dt;p.life-=dt;}
+    particles=particles.filter(p=>p.life>0);
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // bank and water
+    const sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#b7b49b'); sky.addColorStop(.23,'#758c7a'); sky.addColorStop(.24,'#46716a'); sky.addColorStop(1,'#173f47');
+    ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+    // distant bank
+    ctx.fillStyle='#566a4e';ctx.beginPath();ctx.moveTo(0,110);ctx.quadraticCurveTo(160,65,310,118);ctx.quadraticCurveTo(540,72,720,112);ctx.quadraticCurveTo(850,75,960,105);ctx.lineTo(960,145);ctx.lineTo(0,145);ctx.fill();
+    // pond water
+    const water=ctx.createLinearGradient(0,120,0,H);water.addColorStop(0,'#54877d');water.addColorStop(.4,'#2e6869');water.addColorStop(1,'#123b48');
+    ctx.fillStyle=water;ctx.fillRect(0,126,W,H-126);
+    // soft light rays
+    ctx.save();ctx.globalAlpha=.08;ctx.fillStyle='#e0dfb7';
+    for(let i=0;i<6;i++){ctx.beginPath();ctx.moveTo(250+i*110,130);ctx.lineTo(315+i*110,540);ctx.lineTo(365+i*110,540);ctx.lineTo(285+i*110,130);ctx.fill();}
+    ctx.restore();
+    // water ripples
+    ctx.save();ctx.globalAlpha=.18;ctx.strokeStyle='#d0e1d2';ctx.lineWidth=2;
+    for(let i=0;i<18;i++){const x=(i*137+((performance.now()/55)%1300))%1000;const y=160+(i*47)%350;ctx.beginPath();ctx.ellipse(x,y,rand(9,22),3,0,0,Math.PI*2);ctx.stroke();}
+    ctx.restore();
+    // bank stones
+    for(let i=0;i<17;i++){let x=i*61+8,y=129+Math.sin(i*2)*5;ctx.fillStyle=i%2?'#827e67':'#a49b7a';ctx.beginPath();ctx.ellipse(x,y,rand(10,22),rand(4,8),0,0,Math.PI*2);ctx.fill();}
+    // obstacles
+    for(const o of obstacles){
+      if(o.type==='rock'){
+        ctx.fillStyle='#435d5c';ctx.beginPath();ctx.ellipse(o.x,o.y,o.rx,o.ry,0,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#71817a';ctx.beginPath();ctx.ellipse(o.x-8,o.y-7,o.rx*.55,o.ry*.42,-.3,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#91a59a';ctx.globalAlpha=.35;ctx.beginPath();ctx.ellipse(o.x,o.y+5,o.rx*.8,o.ry*.75,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+      }else{
+        ctx.strokeStyle='#4e7860';ctx.lineWidth=5;ctx.lineCap='round';
+        for(let j=-2;j<=2;j++){ctx.beginPath();ctx.moveTo(o.x,o.y+o.ry);ctx.quadraticCurveTo(o.x+j*9,o.y,o.x+j*11,o.y-o.ry);ctx.stroke();}
+        ctx.fillStyle='#79a47c';
+        for(let j=-2;j<=2;j++){ctx.beginPath();ctx.ellipse(o.x+j*11,o.y-o.ry+Math.abs(j)*6,6,14,j*.25,0,Math.PI*2);ctx.fill();}
+      }
+    }
+    // fish shadows and fish bodies
+    for(const f of fish){
+      if(!f.alive) continue;
+      const t=fishTypes[f.typeIndex];
+      // some fish are behind scenery; visually obscure a few near obstacles
+      ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.angle);
+      ctx.globalAlpha=.92;
+      ctx.fillStyle=t.color;ctx.beginPath();ctx.ellipse(0,0,t.size*1.45,t.size*.72,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.moveTo(-t.size*1.1,0);ctx.lineTo(-t.size*2, -t.size*.8);ctx.lineTo(-t.size*2,t.size*.8);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#edf0d7';ctx.beginPath();ctx.arc(t.size*.75,-t.size*.12,2.5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#152c2c';ctx.beginPath();ctx.arc(t.size*.82,-t.size*.12,1.2,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#f3e5c6';ctx.lineWidth=1;ctx.globalAlpha=.5;ctx.beginPath();ctx.moveTo(-2,-t.size*.45);ctx.lineTo(3,t.size*.45);ctx.stroke();
+      ctx.restore();
+    }
+    // fisherman on bank
+    ctx.save();
+    ctx.fillStyle='#2b3836';ctx.beginPath();ctx.ellipse(105,470,55,12,0,0,Math.PI*2);ctx.fill();
+    // legs and boots
+    ctx.strokeStyle='#28312e';ctx.lineWidth=12;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(96,425);ctx.lineTo(91,463);ctx.moveTo(118,425);ctx.lineTo(128,463);ctx.stroke();
+    ctx.strokeStyle='#4b5b53';ctx.lineWidth=22;ctx.beginPath();ctx.moveTo(105,365);ctx.lineTo(108,420);ctx.stroke();
+    // head and hat
+    ctx.fillStyle='#d2aa83';ctx.beginPath();ctx.arc(104,344,15,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#665744';ctx.beginPath();ctx.ellipse(104,333,20,5,0,0,Math.PI*2);ctx.fill();ctx.fillRect(96,325,16,9);
+    // arm and rod
+    ctx.strokeStyle='#c9a17c';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(109,376);ctx.lineTo(137,388);ctx.stroke();
+    ctx.strokeStyle='#4a3527';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(133,388);ctx.lineTo(185,315);ctx.stroke();
+    ctx.restore();
+    // aim line
+    const origin={x:fisherman.x+35,y:fisherman.y-50};
+    if(running){
+      ctx.save();ctx.setLineDash([6,7]);ctx.strokeStyle='rgba(255,239,186,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(origin.x,origin.y);ctx.lineTo(aim.x,aim.y);ctx.stroke();ctx.setLineDash([]);
+      ctx.strokeStyle='#f5e5b5';ctx.beginPath();ctx.arc(aim.x,aim.y,11,0,Math.PI*2);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(aim.x-15,aim.y);ctx.lineTo(aim.x+15,aim.y);ctx.moveTo(aim.x,aim.y-15);ctx.lineTo(aim.x,aim.y+15);ctx.stroke();ctx.restore();
+    }
+    // cast line animation
+    if(castLine){
+      ctx.save();ctx.strokeStyle='#f5f0d8';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(castLine.from.x,castLine.from.y);ctx.quadraticCurveTo((castLine.from.x+castLine.to.x)/2,castLine.from.y-30,castLine.to.x,castLine.to.y);ctx.stroke();
+      ctx.fillStyle='#fff4c6';ctx.beginPath();ctx.arc(castLine.to.x,castLine.to.y,4,0,Math.PI*2);ctx.fill();ctx.restore();
+    }
+    // particles
+    for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    // range indicator and rod badge
+    if(running){
+      ctx.fillStyle='rgba(8,25,29,.7)';ctx.fillRect(14,14,168,28);
+      ctx.fillStyle='#f0f4e9';ctx.font='14px system-ui';ctx.fillText(`Rod level ${rodLevel} · range ${rods[rodLevel-1].range}`,24,33);
+    }
+  }
+  function loop(now){
+    if(!running) return;
+    const dt=Math.min(.05,(now-lastFrame)/1000 || 0);lastFrame=now;
+    update(dt);draw();
+    if(running) requestAnimationFrame(loop);
+  }
+  function canvasPoint(e){
+    const r=canvas.getBoundingClientRect();
+    return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};
+  }
+  canvas.addEventListener('pointermove',e=>{aim=canvasPoint(e);});
+  canvas.addEventListener('pointerdown',e=>{
+    e.preventDefault(); aim=canvasPoint(e);
+    if(running) cast();
+  });
+  $('startBtn').addEventListener('click',startGame);
+  $('restartBtn').addEventListener('click',()=>{resetRound();startGame();});
+  ui.upgradeBtn.addEventListener('click',upgrade);
+  // Draw a scene before the player starts.
+  draw();
+  updateUpgrade();
+})();
+</script>
+</body>
+</html>

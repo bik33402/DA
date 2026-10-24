@@ -2,449 +2,240 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bikram Prasad Bhusal | Portfolio</title>
-<meta name="description" content="Bikram Prasad Bhusal: pharmacy diploma graduate, bachelor's student at Dong-A University, cricket lover, and passionate helper.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fishing Adventure</title>
 <style>
-  :root {
-    --bg: #f3faf8; --surface: #ffffff; --text: #0c2828; --muted: #567170;
-    --accent: #0fa58a; --accent-2: #f5a524; --accent-3: #e4572e;
-    --border: #d9ebe6; --radius: 22px; --shadow: 0 18px 40px -22px rgba(15,165,138,.55);
-  }
-  :root[data-theme="dark"] {
-    --bg: #07181a; --surface: #0e2b2c; --text: #eaf7f4; --muted: #8fb0ab;
-    --accent: #2fd4b4; --accent-2: #ffc14d; --accent-3: #ff7a59;
-    --border: #17403f; --shadow: 0 18px 40px -22px rgba(47,212,180,.5);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.65; overflow-x: hidden;
-    transition: background .3s, color .3s;
-  }
-  a { color: inherit; text-decoration: none; }
-  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
-  .grad { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
-  /* progress bar */
-  #bar { position: fixed; top: 0; left: 0; height: 4px; width: 0; z-index: 50; background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3)); }
-
-  /* NAV */
-  nav { position: sticky; top: 0; z-index: 30; backdrop-filter: blur(14px); background: color-mix(in srgb, var(--bg) 80%, transparent); border-bottom: 1px solid var(--border); }
-  nav .wrap { display: flex; justify-content: space-between; align-items: center; height: 62px; gap: 10px; }
-  .logo { font-weight: 800; letter-spacing: -.5px; font-size: 1.1rem; }
-  .logo b { color: var(--accent); }
-  nav ul { display: flex; gap: 20px; list-style: none; font-size: .9rem; color: var(--muted); }
-  nav ul a:hover { color: var(--accent); }
-  #theme { border: 1px solid var(--border); background: var(--surface); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.05rem; }
-  @media (max-width: 620px) { nav ul { display: none; } }
-
-  /* HERO */
-  .hero { position: relative; padding: 70px 0 70px; overflow: hidden; }
-  .blob { position: absolute; border-radius: 50%; filter: blur(70px); z-index: -1; animation: drift 12s ease-in-out infinite alternate; }
-  .blob.a { width: 360px; height: 360px; background: var(--accent); top: -80px; right: -80px; opacity: .35; }
-  .blob.b { width: 280px; height: 280px; background: var(--accent-2); bottom: -40px; left: -90px; opacity: .28; animation-delay: -4s; }
-  .blob.c { width: 200px; height: 200px; background: var(--accent-3); top: 40%; left: 45%; opacity: .14; animation-delay: -8s; }
-  @keyframes drift { to { transform: translate(40px, 30px) scale(1.12); } }
-  .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
-  @media (max-width: 780px) { .hero-grid { grid-template-columns: 1fr; text-align: center; } .hero-photo { order: -1; } .btns, .pills { justify-content: center; } }
-  .hello { display: inline-block; padding: 7px 16px; border-radius: 999px; font-size: .85rem; font-weight: 600; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); margin-bottom: 18px; }
-  .wave { display: inline-block; animation: wave 2s infinite; transform-origin: 70% 70%; }
-  @keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(16deg); } 20%, 40% { transform: rotate(-10deg); } 50% { transform: rotate(8deg); } }
-  h1 { font-size: clamp(2.3rem, 7.5vw, 4.1rem); line-height: 1.05; letter-spacing: -2px; margin-bottom: 14px; }
-  .typed-line { font-size: clamp(1.1rem, 3.5vw, 1.5rem); font-weight: 700; margin-bottom: 16px; min-height: 2em; }
-  .typed-line .cursor { display: inline-block; width: 3px; height: 1.1em; background: var(--accent); margin-left: 3px; vertical-align: -3px; animation: blink 1s steps(1) infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-  .lead { color: var(--muted); font-size: 1.06rem; max-width: 520px; margin-bottom: 26px; }
-  @media (max-width: 780px) { .lead { margin-left: auto; margin-right: auto; } }
-  .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
-  .btn { padding: 13px 26px; border-radius: 999px; font-weight: 600; font-size: .95rem; border: 1.5px solid var(--border); background: var(--surface); transition: transform .15s, box-shadow .15s; cursor: pointer; display: inline-block; text-align: center; }
-  .btn:hover { transform: translateY(-3px); }
-  .btn.primary { background: linear-gradient(90deg, var(--accent), #0b8ba5); border-color: transparent; color: #fff; box-shadow: var(--shadow); }
-  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
-  .pills span { font-size: .8rem; padding: 5px 13px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
-
-  .hero-photo { display: grid; place-items: center; }
-  .photo-frame { position: relative; width: min(300px, 72vw); aspect-ratio: 1; border-radius: 50%; padding: 8px; background: conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent)); animation: spin 10s linear infinite; box-shadow: var(--shadow); }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .photo-wrap { position: relative; width: min(300px, 72vw); aspect-ratio: 1; }
-  .photo-frame .inner { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: var(--surface); display: grid; place-items: center; animation: spin 10s linear infinite reverse; }
-  .initials { font-size: 4.2rem; font-weight: 800; color: var(--accent); }
-  .badge { position: absolute; background: var(--surface); border: 1px solid var(--border); padding: 8px 14px; border-radius: 999px; font-size: .82rem; font-weight: 600; box-shadow: 0 12px 26px -12px rgba(0,0,0,.35); animation: float 4s ease-in-out infinite; z-index: 2; }
-  .badge.one { top: 4%; left: -8%; }
-  .badge.two { bottom: 6%; right: -10%; animation-delay: 1.5s; }
-  .badge.three { top: 48%; right: -14%; animation-delay: 2.6s; }
-  @keyframes float { 50% { transform: translateY(-9px); } }
-
-  /* MARQUEE */
-  .marquee { overflow: hidden; border-block: 1px solid var(--border); background: var(--surface); padding: 14px 0; }
-  .track { display: flex; gap: 38px; width: max-content; animation: scroll 26s linear infinite; font-weight: 700; color: var(--muted); }
-  .track span { white-space: nowrap; }
-  .track span:nth-child(3n) { color: var(--accent); }
-  .track span:nth-child(3n+1) { color: var(--accent-2); }
-  @keyframes scroll { to { transform: translateX(-50%); } }
-
-  /* SECTIONS */
-  section { padding: 62px 0; }
-  .eyebrow { color: var(--accent); font-weight: 700; font-size: .78rem; letter-spacing: 2.5px; text-transform: uppercase; }
-  h2 { font-size: clamp(1.7rem, 5vw, 2.2rem); letter-spacing: -1px; margin: 6px 0 8px; }
-  .sub { color: var(--muted); margin-bottom: 30px; max-width: 580px; }
-
-  /* projects */
-  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-  .project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; justify-content: space-between; transition: transform .2s, box-shadow .2s, border-color .2s; }
-  .project-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow); }
-  .project-card h3 { font-size: 1.2rem; margin-bottom: 10px; }
-  .project-card p { color: var(--muted); font-size: .93rem; margin-bottom: 20px; }
-  .project-links { display: flex; gap: 10px; flex-wrap: wrap; }
-
-  /* flip cards */
-  .flips { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; }
-  .flip { perspective: 900px; height: 190px; cursor: pointer; }
-  .flip-in { position: relative; width: 100%; height: 100%; transition: transform .7s; transform-style: preserve-3d; }
-  .flip:hover .flip-in, .flip.on .flip-in { transform: rotateY(180deg); }
-  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 6px; }
-  .front { background: var(--surface); border: 1px solid var(--border); }
-  .front .ico { font-size: 2.4rem; }
-  .front h3 { font-size: 1.02rem; }
-  .front small { color: var(--muted); }
-  .back { transform: rotateY(180deg); color: #fff; font-size: .92rem; }
-  .flip:nth-child(1) .back { background: linear-gradient(135deg, #0fa58a, #0b6e8a); }
-  .flip:nth-child(2) .back { background: linear-gradient(135deg, #5b6cff, #0b8ba5); }
-  .flip:nth-child(3) .back { background: linear-gradient(135deg, #f5a524, #e4572e); }
-  .flip:nth-child(4) .back { background: linear-gradient(135deg, #e4572e, #b5179e); }
-
-  /* about */
-  .about-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
-  @media (max-width: 760px) { .about-grid { grid-template-columns: 1fr; } }
-  .box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
-  .box p { color: var(--muted); margin-bottom: 12px; }
-  .box p:last-child { margin: 0; }
-  .box strong { color: var(--text); }
-  .facts { display: grid; gap: 12px; align-content: start; }
-  .fact { display: flex; justify-content: space-between; gap: 12px; padding: 14px 18px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); font-size: .92rem; }
-  .fact span:first-child { color: var(--muted); }
-  .fact span:last-child { font-weight: 700; text-align: right; }
-
-  /* timeline */
-  .timeline { border-left: 2px dashed var(--border); padding-left: 28px; display: grid; gap: 26px; margin-left: 8px; }
-  .tl { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; transition: transform .2s, border-color .2s; }
-  .tl:hover { transform: translateX(6px); border-color: var(--accent); }
-  .tl::before { content: attr(data-ico); position: absolute; left: -48px; top: 18px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); font-size: 1.05rem; }
-  .tl.now::before { border-color: var(--accent-2); }
-  .tl small { color: var(--accent); font-weight: 700; }
-  .tl h3 { font-size: 1.1rem; margin: 2px 0; }
-  .tl p { color: var(--muted); font-size: .93rem; }
-
-  /* CRICKET */
-  .cricket { background: linear-gradient(160deg, #0b6e4f, #0fa58a 55%, #1a8f5f); color: #fff; border-radius: 30px; padding: 46px 30px; position: relative; overflow: hidden; }
-  .cricket::after { content: ""; position: absolute; inset: auto -10% -60% -10%; height: 70%; border-radius: 50%; border: 2px solid rgba(255,255,255,.18); }
-  .cricket .eyebrow { color: #ffe08a; }
-  .cricket h2 { color: #fff; }
-  .cricket .sub { color: rgba(255,255,255,.85); }
-  .ball { position: absolute; right: 34px; top: 30px; width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ff6b5a, #b3171d 70%); box-shadow: 0 10px 20px rgba(0,0,0,.35); animation: bounce 1.6s cubic-bezier(.3,.6,.4,1) infinite; }
-  .ball::before { content: ""; position: absolute; left: 50%; top: 4px; bottom: 4px; width: 2px; margin-left: -1px; background: rgba(255,255,255,.75); border-radius: 2px; box-shadow: -5px 0 0 -1px rgba(255,255,255,.45), 5px 0 0 -1px rgba(255,255,255,.45); }
-  @keyframes bounce { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(95px) rotate(300deg); } }
-  .lessons { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; position: relative; z-index: 1; }
-  .lesson { background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.22); border-radius: 18px; padding: 18px; backdrop-filter: blur(6px); }
-  .lesson b { display: block; font-size: 1.05rem; margin-bottom: 2px; }
-  .lesson span { font-size: .88rem; opacity: .9; }
-
-  /* HELP */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s, border-color .2s; }
-  .card::before { content: ""; position: absolute; left: 0; top: 0; height: 4px; width: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
-  .card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow); }
-  .card .big { font-size: 2rem; margin-bottom: 8px; }
-  .card h3 { font-size: 1.08rem; margin-bottom: 4px; }
-  .card p { color: var(--muted); font-size: .93rem; }
-
-  /* chips */
-  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip { padding: 10px 18px; border-radius: 999px; font-size: .9rem; font-weight: 500; background: var(--surface); border: 1px solid var(--border); transition: all .15s; }
-  .chip:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: translateY(-3px) rotate(-1.5deg); }
-
-  /* quote */
-  .quote { text-align: center; padding: 56px 24px; border-radius: 30px; position: relative; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, var(--surface)), color-mix(in srgb, var(--accent-2) 16%, var(--surface))); border: 1px solid var(--border); }
-  .quote::before { content: "“"; position: absolute; top: -10px; left: 24px; font-size: 7rem; line-height: 1; color: var(--accent); opacity: .25; font-family: Georgia, serif; }
-  .quote q { font-size: clamp(1.4rem, 4.5vw, 2.2rem); font-weight: 800; letter-spacing: -.5px; line-height: 1.25; quotes: none; }
-  .quote small { display: block; margin-top: 12px; color: var(--muted); }
-
-  /* FOOTER */
-  footer { margin-top: 30px; padding: 56px 0 44px; border-top: 1px solid var(--border); text-align: center; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 7%, transparent)); }
-  footer p { color: var(--muted); margin-bottom: 22px; }
-  .socials { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
-  .socials a { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--border); transition: all .2s; }
-  .socials a:hover { transform: translateY(-5px) scale(1.06); background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: var(--shadow); }
-  .socials svg { width: 22px; height: 22px; fill: currentColor; }
-  .copy { font-size: .85rem; margin: 0 !important; }
-
-  #top-btn { position: fixed; right: 18px; bottom: 18px; width: 46px; height: 46px; border-radius: 50%; border: none; background: var(--accent); color: #fff; font-size: 1.2rem; cursor: pointer; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .3s, transform .2s; z-index: 40; }
-  #top-btn.show { opacity: 1; pointer-events: auto; }
-  #top-btn:hover { transform: translateY(-3px); }
-
-  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .7s; }
-  .reveal.show { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-    .reveal { opacity: 1; transform: none; }
-  }
+:root{--ink:#123047;--blue:#087eaa;--deep:#07516f;--gold:#ffd166;--paper:#f4fbff}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#dff6ff,#f7fcff);color:var(--ink);min-height:100vh;display:flex;justify-content:center;padding:14px}
+.app{width:min(1100px,100%);margin:auto}
+header{text-align:center;margin:4px 0 12px}
+h1{margin:0;font-size:clamp(1.8rem,4vw,2.7rem);color:#07516f;letter-spacing:.3px}
+.subtitle{margin:2px 0;color:#477086}
+.hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.stat{background:#fff;border:1px solid #c9e8f4;border-radius:12px;padding:9px 11px;box-shadow:0 3px 10px #07516f0c;min-width:0}
+.stat span{display:block;font-size:.76rem;color:#57788a;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.stat strong{font-size:1.15rem;white-space:nowrap}
+.game-wrap{position:relative;background:#fff;border:2px solid #b5e3f2;border-radius:18px;overflow:hidden;box-shadow:0 12px 28px #07516f18}
+canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none;background:#83d9ef}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:#092f45a8;backdrop-filter:blur(3px);z-index:4}
+.panel{width:min(560px,100%);max-height:100%;overflow:auto;background:#fff;border-radius:18px;padding:clamp(16px,3vw,28px);box-shadow:0 15px 40px #002a3c55;text-align:center}
+.panel h2{margin:0 0 8px;font-size:clamp(1.4rem,3vw,2rem);color:#07516f}
+.panel p{line-height:1.45;margin:8px 0}
+.instructions{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left;margin:14px 0}
+.info{background:#effaff;border-radius:10px;padding:10px;font-size:.9rem}
+button{font:inherit;font-weight:800;border:0;border-radius:11px;padding:12px 18px;cursor:pointer;transition:transform .12s,filter .12s;touch-action:manipulation}
+button:hover{filter:brightness(1.04);transform:translateY(-1px)}
+button:focus-visible{outline:3px solid #ffb703;outline-offset:3px}
+.primary{background:#087eaa;color:#fff;box-shadow:0 4px 0 #07516f}
+.secondary{background:#e6f7ff;color:#07516f;border:1px solid #9bd7eb}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px;background:#f5fcff;border-top:1px solid #d7eef7}
+.controls button{min-width:125px}
+#catchBtn{background:#ffd166;color:#513800;display:none}
+#catchBtn.ready{display:inline-block;animation:pulse .8s infinite alternate}
+#castBtn{background:#087eaa;color:white}
+#status{min-height:26px;text-align:center;font-weight:800;color:#07516f;padding:5px 10px 10px}
+.progress-row{display:flex;align-items:center;gap:10px;margin:4px 0 10px;font-size:.88rem}
+.progress{height:9px;flex:1;background:#dceef4;border-radius:99px;overflow:hidden}
+.progress div{height:100%;width:0;background:#f5a623;transition:width .2s}
+.timing{display:none;margin:0 14px 12px;background:#eaf8ff;border-radius:12px;padding:9px 12px}
+.timing.show{display:block}
+.timing-label{font-weight:800;font-size:.86rem;margin-bottom:6px}
+.track{height:18px;background:#b7dce9;border-radius:99px;position:relative;overflow:hidden}
+.zone{position:absolute;top:0;bottom:0;background:#68d391;border:2px solid #16834a;border-radius:5px}
+.needle{position:absolute;top:-3px;bottom:-3px;width:5px;background:#ef476f;border-radius:4px;box-shadow:0 0 0 2px white}
+.footer{text-align:center;font-size:.8rem;color:#628091;margin:10px}
+@keyframes pulse{from{box-shadow:0 0 0 0 #ffd16666}to{box-shadow:0 0 0 7px #ffd16600}}
+@media(max-width:650px){body{padding:7px}.hud{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat{padding:7px 8px}.stat strong{font-size:1rem}.stat span{font-size:.67rem}.instructions{grid-template-columns:1fr}.panel{padding:14px}.controls{gap:7px}.controls button{flex:1;min-width:110px;padding:11px 10px}canvas{aspect-ratio:4/3}}
 </style>
 </head>
 <body>
-<div id="bar"></div>
-
-<nav>
-  <div class="wrap">
-    <a href="#top" class="logo">bikram<b>.</b></a>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#journey">Journey</a></li>
-      <li><a href="#cricket">Cricket</a></li>
-      <li><a href="#help">Helping</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <button id="theme" aria-label="Toggle dark mode">🌙</button>
-  </div>
-</nav>
-
-<header class="hero" id="top">
-  <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
-  <div class="wrap hero-grid">
-    <div>
-      <span class="hello"><span class="wave">👋</span> Hello, I'm a student in Korea</span>
-      <h1>I'm <span class="grad">Bikram Prasad Bhusal</span></h1>
-      <div class="typed-line"><span id="typed"></span><span class="cursor"></span></div>
-      <p class="lead">Pharmacy graduate turned bachelor's student at Dong-A University. I learn by doing, I love cricket, and helping people is what drives me.</p>
-      <div class="btns">
-        <a class="btn primary" href="#projects">View Projects →</a>
-        <a class="btn" href="#contact">Say hello</a>
-      </div>
-      <div class="pills"><span>💊 Pharmacy</span><span>🏏 Cricket</span><span>🤝 Helper</span><span>🇰🇷 Busan</span></div>
-    </div>
-    <div class="hero-photo">
-      <div class="photo-wrap">
-        <div class="photo-frame">
-          <div class="inner">
-            <span class="initials" id="ini">BB</span>
-          </div>
-        </div>
-        <span class="badge one">🏏 Cricket fan</span>
-        <span class="badge two">🤝 Here to help</span>
-        <span class="badge three">💊 Pharmacy</span>
-      </div>
-    </div>
-  </div>
-</header>
-
-<div class="marquee" aria-hidden="true">
-  <div class="track" id="track"></div>
-</div>
-
-<section id="projects">
-  <div class="wrap reveal">
-    <span class="eyebrow">My work</span>
-    <h2>Featured <span class="grad">Projects</span></h2>
-    <p class="sub">Check out my interactive browser game and project documentation.</p>
-    <div class="projects-grid">
-      <div class="project-card">
-        <div>
-          <h3>🎣 Pond Master</h3>
-          <p>A realistic browser fishing challenge game. Aim carefully, choose your catch, avoid obstacles, and beat the clock to upgrade your fishing gear!</p>
-        </div>
-        <div class="project-links">
-          <a class="btn primary" href="fishing.html" target="_blank">Play Game →</a>
-        </div>
-      </div>
-      <div class="project-card">
-        <div>
-          <h3>📄 Project Documentation</h3>
-          <p>Detailed documentation outlining the game design, story, mechanics, rules, and technical specifications for my project.</p>
-        </div>
-        <div class="project-links">
-          <a class="btn" href="https://docs.google.com/document/d/1_hgfBvuJwR4468LFIDVVC4luZQrdEAPih6OjtI_Tsvo/edit?usp=drivesdk" target="_blank">View Document ↗</a>
-        </div>
-      </div>
-    </div>
-  </div>
+<main class="app">
+<header><h1>🎣 Fishing Adventure</h1><p class="subtitle">Read the river. Time your catch. Reach 100 points!</p></header>
+<section class="hud" aria-label="Game statistics">
+ <div class="stat"><span>Score / Goal</span><strong id="score">0 / 100</strong></div>
+ <div class="stat"><span>Time left</span><strong id="timer">60s</strong></div>
+ <div class="stat"><span>Weather</span><strong id="weather">☀️ Sunny</strong></div>
+ <div class="stat"><span>Fish caught</span><strong id="caught">0</strong></div>
+ <div class="stat"><span>Rod level</span><strong id="rod">Basic</strong></div>
 </section>
-
-<section>
-  <div class="wrap reveal">
-    <span class="eyebrow">Quick facts</span>
-    <h2>Tap a card to flip it</h2>
-    <p class="sub">Four things that describe me best.</p>
-    <div class="flips">
-      <div class="flip"><div class="flip-in"><div class="face front"><div class="ico">🎓</div><h3>Diploma in Pharmacy</h3><small>Completed</small></div><div class="face back">My foundation in medicines, health and caring for people.</div></div></div>
-      <div class="flip"><div class="flip-in"><div class="face front"><div class="ico">🏫</div><h3>Dong-A University</h3><small>Bachelor's degree</small></div><div class="face back">Studying in Busan, South Korea and building my future abroad.</div></div></div>
-      <div class="flip"><div class="flip-in"><div class="face front"><div class="ico">🏏</div><h3>Cricket</h3><small>My favorite sport</small></div><div class="face back">Energy, teamwork and friendship, all in one game.</div></div></div>
-      <div class="flip"><div class="flip-in"><div class="face front"><div class="ico">💚</div><h3>Helping Others</h3><small>My passion</small></div><div class="face back">A small act of help can change someone's whole day.</div></div></div>
-    </div>
+<div class="progress-row"><strong id="upgradeText">Rod upgrade: 0 / 5 catches</strong><div class="progress"><div id="upgradeBar"></div></div></div>
+<section class="game-wrap">
+ <canvas id="game" width="960" height="540" aria-label="Fishing river game area"></canvas>
+ <div class="overlay" id="startOverlay">
+  <div class="panel">
+   <h2>Ready for a river adventure?</h2>
+   <p>Earn <b>100 points in 60 seconds</b>. Aim for clear water, watch for a bite, and hit the catch zone at the right moment.</p>
+   <div class="instructions">
+    <div class="info"><b>🎮 Controls</b><br>Mouse: move to aim, click Cast / Catch.<br>Keyboard: arrow keys aim, Space casts or catches.</div>
+    <div class="info"><b>🐟 Fish points</b><br>Small = 5 · Medium = 10 · Rare = 25</div>
+    <div class="info"><b>🌦️ Weather</b><br>Rain tightens the timing zone; wind nudges your aim.</div>
+    <div class="info"><b>🪨 Obstacles & rod</b><br>Rocks/plants block casts. Catch 5 fish to gain 25% more range.</div>
+   </div>
+   <button class="primary" id="startBtn">Start Fishing</button>
   </div>
+ </div>
+ <div class="overlay" id="resultOverlay" style="display:none">
+  <div class="panel"><h2 id="resultTitle">Game Over</h2><p id="resultMessage"></p>
+   <div class="instructions">
+    <div class="info"><b>Final score</b><br><span id="finalScore">0</span></div>
+    <div class="info"><b>Fish caught</b><br><span id="finalCaught">0</span></div>
+    <div class="info"><b>Highest-value fish</b><br><span id="finalFish">None</span></div>
+    <div class="info"><b>Rod reached</b><br><span id="finalRod">Basic</span></div>
+   </div><button class="primary" id="restartBtn">Restart</button>
+  </div>
+ </div>
+ <div class="controls"><button class="secondary" id="leftBtn" aria-label="Aim left">◀ Aim</button><button class="primary" id="castBtn">🎣 Cast (Space)</button><button class="secondary" id="rightBtn" aria-label="Aim right">Aim ▶</button><button id="catchBtn">🐟 Catch!</button></div>
+ <div class="timing" id="timing"><div class="timing-label" id="timingLabel">Fish biting! Hit the green zone!</div><div class="track"><div class="zone" id="zone"></div><div class="needle" id="needle"></div></div></div>
+ <div id="status" role="status" aria-live="polite">Press Start Fishing to begin.</div>
 </section>
-
-<section id="about">
-  <div class="wrap reveal">
-    <span class="eyebrow">About me</span>
-    <h2>A little about <span class="grad">Bikram</span></h2>
-    <p class="sub">Who I am and what I care about.</p>
-    <div class="about-grid">
-      <div class="box">
-        <p>Hi, I'm <strong>Bikram Prasad Bhusal</strong>. I completed my <strong>diploma in pharmacy</strong> and moved to Korea to continue my education with a <strong>bachelor's degree at Dong-A University</strong>.</p>
-        <p>I'm a hands-on learner who picks things up by trying them. Outside class you'll find me playing <strong>cricket</strong>, and nothing makes me happier than <strong>helping others</strong>, whether it's a friend, a classmate, or someone who simply needs a hand.</p>
-      </div>
-      <div class="facts">
-        <div class="fact"><span>Name</span><span>Bikram Prasad Bhusal</span></div>
-        <div class="fact"><span>University</span><span>Dong-A University</span></div>
-        <div class="fact"><span>Background</span><span>Diploma in Pharmacy</span></div>
-        <div class="fact"><span>Based in</span><span>Busan, Korea</span></div>
-        <div class="fact"><span>Hobby</span><span>Cricket 🏏</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="journey">
-  <div class="wrap reveal">
-    <span class="eyebrow">Journey</span>
-    <h2>My <span class="grad">education</span> path</h2>
-    <p class="sub">The steps that brought me here.</p>
-    <div class="timeline">
-      <div class="tl now" data-ico="🇰🇷">
-        <small>Present</small>
-        <h3>Bachelor's Degree, Dong-A University</h3>
-        <p>Studying in Busan, South Korea, learning a new culture and chasing bigger goals.</p>
-      </div>
-      <div class="tl" data-ico="💊">
-        <small>Completed</small>
-        <h3>Diploma in Pharmacy</h3>
-        <p>Built a strong base in medicines, health and caring for people.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="cricket">
-  <div class="wrap reveal">
-    <div class="cricket">
-      <div class="ball"></div>
-      <span class="eyebrow">Off the books</span>
-      <h2>Life on the cricket field 🏏</h2>
-      <p class="sub">Cricket is where I recharge. It also teaches me things no classroom can.</p>
-      <div class="lessons">
-        <div class="lesson"><b>🤝 Teamwork</b><span>Every player matters.</span></div>
-        <div class="lesson"><b>🧘 Patience</b><span>Good things take time.</span></div>
-        <div class="lesson"><b>🎯 Focus</b><span>Eyes on the ball, always.</span></div>
-        <div class="lesson"><b>🏅 Fair play</b><span>Respect the game and people.</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="help">
-  <div class="wrap reveal">
-    <span class="eyebrow">My passion</span>
-    <h2>How I love to <span class="grad">help</span></h2>
-    <p class="sub">Helping others is the thing that motivates me most.</p>
-    <div class="cards">
-      <div class="card"><div class="big">🧑‍🤝‍🧑</div><h3>Friends &amp; classmates</h3><p>Sharing what I know and lending a hand whenever someone is stuck.</p></div>
-      <div class="card"><div class="big">🌏</div><h3>New students in Korea</h3><p>Moving abroad is hard. I like making newcomers feel welcome.</p></div>
-      <div class="card"><div class="big">💊</div><h3>Health awareness</h3><p>With a pharmacy background, I enjoy sharing simple, helpful health knowledge.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="skills">
-  <div class="wrap reveal">
-    <span class="eyebrow">Strengths</span>
-    <h2>What I <span class="grad">bring</span></h2>
-    <p class="sub">Skills I'm building and proud of.</p>
-    <div class="chips">
-      <span class="chip">💊 Pharmacy Knowledge</span>
-      <span class="chip">🤝 Helping People</span>
-      <span class="chip">🗣️ Communication</span>
-      <span class="chip">👥 Teamwork</span>
-      <span class="chip">🏏 Team Sports</span>
-      <span class="chip">⚡ Learning by Doing</span>
-      <span class="chip">🌏 Adapting to New Places</span>
-      <span class="chip">😊 Positive Attitude</span>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap reveal">
-    <div class="quote">
-      <q>Helping others is my passion.</q>
-      <small>Bikram Prasad Bhusal</small>
-    </div>
-  </div>
-</section>
-
-<footer id="contact">
-  <div class="wrap">
-    <span class="eyebrow">Contact</span>
-    <h2>Let's <span class="grad">connect</span></h2>
-    <p>Open to friends, teamwork and new opportunities.</p>
-    <div class="btns" style="justify-content:center">
-      <a class="btn primary" href="mailto:you@example.com?subject=Hello%20Bikram">✉️ Send me an email</a>
-    </div>
-    <div class="socials">
-      <a href="https://github.com/yourusername" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a>
-      <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
-      <a href="https://facebook.com/yourusername" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a>
-      <a href="https://instagram.com/yourusername" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85C2.38 3.92 3.9 2.38 7.15 2.23 8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 2.7.27.27 2.69.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.36 2.62 6.78 6.98 6.98C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c4.35-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.35-2.62-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg></a>
-      <a href="mailto:you@example.com" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-13zm2.3.3L12 11.7l7.7-5.9a.5.5 0 0 0-.2-.05h-15a.5.5 0 0 0-.2.05zM20 8l-7.4 5.7a1 1 0 0 1-1.2 0L4 8v10.5c0 .28.22.5.5.5h15a.5.5 0 0 0 .5-.5V8z"/></svg></a>
-    </div>
-    <p class="copy">© <span id="yr">2026</span> Bikram Prasad Bhusal · Dong-A University, Busan</p>
-  </div>
-</footer>
-
-<button id="top-btn" aria-label="Back to top">↑</button>
-
+<p class="footer">Tip: Aim at open water, not through rocks or thick plants. Catching 5 fish unlocks a longer cast.</p>
+</main>
 <script>
-  document.getElementById('yr').textContent = new Date().getFullYear();
-  var root = document.documentElement, tbtn = document.getElementById('theme');
-  function setTheme(t) { root.setAttribute('data-theme', t); tbtn.textContent = t === 'dark' ? '☀️' : '🌙'; try { localStorage.setItem('theme', t); } catch (e) {} }
-  var saved = null; try { saved = localStorage.getItem('theme'); } catch (e) {}
-  setTheme(saved || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-  tbtn.onclick = function () { setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); };
-
-  var words = ['Pharmacy Graduate 💊', 'Dong-A University Student 🎓', 'Cricket Lover 🏏', 'Passionate Helper 🤝'];
-  var tEl = document.getElementById('typed'), wi = 0, ci = 0, del = false;
-  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function type() {
-    var w = words[wi];
-    if (reduce) { tEl.textContent = w; wi = (wi + 1) % words.length; return setTimeout(type, 2200); }
-    tEl.textContent = w.slice(0, ci);
-    if (!del && ci === w.length) { del = true; return setTimeout(type, 1500); }
-    if (del && ci === 0) { del = false; wi = (wi + 1) % words.length; }
-    ci += del ? -1 : 1;
-    setTimeout(type, del ? 35 : 80);
-  }
-  type();
-
-  var items = ['💊 Pharmacy', '🏏 Cricket', '🤝 Helping Others', '🇰🇷 Dong-A University', '🎓 Bachelor\'s Student', '⚡ Learning by Doing', '🌏 Busan'];
-  var track = document.getElementById('track');
-  track.innerHTML = items.concat(items).concat(items).concat(items).map(function (s) { return '<span>' + s + '</span>'; }).join('');
-
-  document.querySelectorAll('.flip').forEach(function (f) { f.addEventListener('click', function () { f.classList.toggle('on'); }); });
-
-  var els = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (en) { en.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } }); }, { threshold: 0.1 });
-    els.forEach(function (el) { io.observe(el); });
-  } else { els.forEach(function (el) { el.classList.add('show'); }); }
-
-  var bar = document.getElementById('bar'), topBtn = document.getElementById('top-btn');
-  window.addEventListener('scroll', function () {
-    var h = document.documentElement, max = h.scrollHeight - h.clientHeight;
-    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
-    topBtn.classList.toggle('show', h.scrollTop > 500);
-  }, { passive: true });
-  topBtn.onclick = function () { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+(() => {
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const $=id=>document.getElementById(id);
+const W=960,H=540, river={x:55,y:115,w:850,h:380};
+const obstacles=[
+ {x:190,y:205,r:34,type:'rock'},{x:365,y:385,r:42,type:'plant'},
+ {x:520,y:175,r:38,type:'rock'},{x:700,y:325,r:48,type:'plant'},
+ {x:815,y:205,r:27,type:'rock'},{x:270,y:440,r:25,type:'rock'}
+];
+let state='start',score=0,timeLeft=60,caught=0,rodLevel=1,upgradeCount=0,highestFish='None';
+let weather='Sunny',weatherTimer=0,weatherDuration=9,aim={x:490,y:285},wind=0,cast=null,bite=null,fish=[],particles=[],last=0,elapsed=0,toast='',toastTimer=0;
+const fishTypes=[
+ {name:'Small fish',points:5,color:'#ffe08a',size:10,weight:60,zone:0.30},
+ {name:'Medium fish',points:10,color:'#ff8c69',size:15,weight:30,zone:0.23},
+ {name:'Rare fish',points:25,color:'#c4a1ff',size:19,weight:10,zone:0.16}
+];
+function reset(){
+ state='playing';score=0;timeLeft=60;caught=0;rodLevel=1;upgradeCount=0;highestFish='None';
+ weather='Sunny';weatherTimer=0;weatherDuration=9;aim={x:480,y:270};wind=0;cast=null;bite=null;fish=[];particles=[];elapsed=0;toast='Good luck! Find clear water and cast.';toastTimer=2.4;
+ for(let i=0;i<10;i++)spawnFish(true);
+ $('startOverlay').style.display='none';$('resultOverlay').style.display='none';$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+ updateHud();last=performance.now();
+}
+function spawnFish(initial=false){
+ const type=pickFish();let x=river.x+35+Math.random()*(river.w-70),y=river.y+40+Math.random()*(river.h-80);
+ for(let tries=0;tries<20&&obstacles.some(o=>Math.hypot(x-o.x,y-o.y)<o.r+24);tries++){x=river.x+30+Math.random()*(river.w-60);y=river.y+30+Math.random()*(river.h-60);}
+ fish.push({x,y,vx:(Math.random()<.5?-1:1)*(.35+Math.random()*.6),vy:(Math.random()-.5)*.35,type,phase:Math.random()*6.28,alive:true});
+}
+function pickFish(){let n=Math.random()*100;return fishTypes[n<60?0:n<90?1:2];}
+function updateHud(){
+ $('score').textContent=score+' / 100';$('timer').textContent=Math.ceil(timeLeft)+'s';$('weather').textContent=(weather==='Sunny'?'☀️ ':weather==='Rainy'?'🌧️ ':'💨 ')+weather;
+ $('caught').textContent=caught;$('rod').textContent=rodLevel===1?'Basic':'Pro (+25%)';
+ $('upgradeText').textContent=rodLevel===1?`Rod upgrade: ${upgradeCount} / 5 catches`:'Rod upgraded! +25% range';
+ $('upgradeBar').style.width=(rodLevel===1?upgradeCount/5*100:100)+'%';
+}
+function setToast(t,d=2){toast=t;toastTimer=d;$('status').textContent=t;}
+function validPoint(x,y){
+ if(x<river.x+8||x>river.x+river.w-8||y<river.y+8||y>river.y+river.h-8)return false;
+ return !obstacles.some(o=>Math.hypot(x-o.x,y-o.y)<o.r+13);
+}
+function aimAt(x,y){aim.x=Math.max(river.x+8,Math.min(river.x+river.w-8,x));aim.y=Math.max(river.y+8,Math.min(river.y+river.h-8,y));}
+function castLine(){
+ if(state!=='playing'||cast||bite)return;
+ let target={x:aim.x,y:aim.y};
+ if(weather==='Windy')target.x+=Math.sin(elapsed*3)*18;
+ if(!validPoint(target.x,target.y)){setToast('Blocked! Try another angle.');return;}
+ let range=Math.hypot(target.x-110,target.y-430),maxRange=rodLevel===1?700:875;
+ if(range>maxRange){setToast('Too far! Upgrade your rod or aim closer.');return;}
+ cast={x:110,y:430,tx:target.x,ty:target.y,t:0,duration:.45};
+ setToast('Line cast! Watch for a bite…',1.4);
+}
+function startBite(){
+ if(!cast||bite||cast.t<cast.duration)return;
+ let nearest=fish.filter(f=>f.alive).sort((a,b)=>Math.hypot(a.x-cast.tx,a.y-cast.ty)-Math.hypot(b.x-cast.tx,b.y-cast.ty))[0];
+ if(!nearest||Math.hypot(nearest.x-cast.tx,nearest.y-cast.ty)>125){cast=null;setToast('No bite this time. Try another spot.');return;}
+ let delay=1.1+Math.random()*2.3;
+ bite={fish:nearest,delay,elapsed:0,phase:Math.random()*Math.PI*2,zone:nearest.type.zone*(weather==='Rainy'?.68:1),success:false};
+ cast.waiting=true;setToast('Line in the water… be patient.',1.2);
+}
+function catchAttempt(){
+ if(state!=='playing')return;
+ if(!bite){setToast('No bite yet — cast and wait for the signal.',1.5);return;}
+ if(bite.elapsed<bite.delay){setToast('Too early! Wait for the bite signal.',1.2);return;}
+ const pos=indicatorPosition(),inside=Math.abs(pos-.5)<bite.zone/2;
+ if(inside){
+  let f=bite.fish;score+=f.type.points;caught++;highestFish=f.type.name;f.alive=false;
+  if(rodLevel===1){upgradeCount++;if(upgradeCount>=5){rodLevel=2;setToast('✨ Rod upgraded! Casting range increased by 25%.',3);}else setToast(`Caught ${f.type.name}! +${f.type.points} points.`,1.8);}
+  else setToast(`Caught ${f.type.name}! +${f.type.points} points.`,1.8);
+  burst(cast.tx,cast.ty,f.type.color);bite=null;cast=null;$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+  if(score>=100){score=Math.max(score,100);finish(true);return;}
+  if(fish.filter(f=>f.alive).length<7)spawnFish();
+ }else{
+  score=Math.max(0,score-5);setToast('Missed! The fish escaped. −5 points.',2);bite.fish.alive=true;bite=null;cast=null;
+  $('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+ }
+ updateHud();
+}
+function indicatorPosition(){return (Math.sin((bite.elapsed-bite.delay)*4.1+bite.phase)+1)/2;}
+function finish(win){
+ state='ended';cast=null;bite=null;$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+ $('resultTitle').textContent=win?'🏆 You Win!':'Game Over';
+ $('resultMessage').textContent=win?'Amazing fishing! You reached the 100-point goal.':'Time ran out before you reached 100 points. Try a new strategy!';
+ $('finalScore').textContent=score+' points';$('finalCaught').textContent=caught;$('finalFish').textContent=highestFish;$('finalRod').textContent=rodLevel===2?'Pro (+25% range)':'Basic';
+ $('resultOverlay').style.display='flex';updateHud();
+}
+function burst(x,y,color){for(let i=0;i<20;i++)particles.push({x,y,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,life:.5+Math.random()*.5,color});}
+function changeWeather(){weather=['Sunny','Rainy','Windy'][Math.floor(Math.random()*3)];weatherTimer=0;weatherDuration=7+Math.random()*6;wind=(Math.random()-.5)*1.5;setToast(weather==='Rainy'?'Rain! The catch zone is smaller.':weather==='Windy'?'Wind is shifting your cast!':'The sky is clear. Normal conditions.',2);updateHud();}
+function update(dt){
+ if(state!=='playing')return;
+ elapsed+=dt;timeLeft=Math.max(0,timeLeft-dt);weatherTimer+=dt;
+ if(weatherTimer>weatherDuration)changeWeather();
+ if(weather==='Windy'){aim.x+=Math.sin(elapsed*2.2)*wind*dt*7;aim.x=Math.max(river.x+8,Math.min(river.x+river.w-8,aim.x));}
+ fish.forEach(f=>{if(!f.alive)return;f.x+=f.vx*dt*35;f.y+=Math.sin(elapsed*1.8+f.phase)*dt*10;if(f.x<river.x+20||f.x>river.x+river.w-20)f.vx*=-1;if(f.y<river.y+25)f.y=river.y+25;if(f.y>river.y+river.h-25)f.y=river.y+river.h-25;});
+ if(cast){cast.t+=dt;if(cast.t>=cast.duration&&!cast.waiting){cast.t=cast.duration;startBite();}if(cast.waiting&&!bite){cast=null;}}
+ if(bite){bite.elapsed+=dt;if(bite.elapsed>=bite.delay){$('timing').classList.add('show');$('catchBtn').classList.add('ready');$('timingLabel').textContent='🐟 BITE! Press Catch when the red marker is in the green zone!';let zoneW=bite.zone*100;$('zone').style.width=zoneW+'%';$('zone').style.left=(50-zoneW/2)+'%';$('needle').style.left=(indicatorPosition()*100)+'%';if(bite.elapsed>bite.delay+4){score=Math.max(0,score-5);bite.fish.alive=true;bite=null;cast=null;$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');setToast('Too slow! The fish escaped. −5 points.',2);}}}
+ particles=particles.filter(p=>p.life>0);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=dt;});
+ if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('status').textContent=state==='playing'?'Aim for clear water and wait for a bite.':'';}
+ if(timeLeft<=0){finish(false);return;}updateHud();
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ // banks and grass
+ ctx.fillStyle='#8bd18b';ctx.fillRect(0,0,W,H);
+ ctx.fillStyle='#68b96f';for(let i=0;i<95;i++){let x=(i*137)%W,y=(i*79)%H;ctx.beginPath();ctx.ellipse(x,y,3,8,(i%5)*.4,0,Math.PI*2);ctx.fill();}
+ // river
+ let g=ctx.createLinearGradient(0,river.y,0,river.y+river.h);g.addColorStop(0,'#4fc3e4');g.addColorStop(.5,'#1a9ecb');g.addColorStop(1,'#087eaa');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(river.x,river.y,river.w,river.h,42);ctx.fill();
+ // ripples
+ for(let i=0;i<22;i++){let x=(i*91+elapsed*22)%(river.w-30)+river.x+15,y=river.y+30+((i*57)% (river.h-55));ctx.strokeStyle='#c7f5ff66';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(x,y,13+(i%4)*4,3,0,0,Math.PI*2);ctx.stroke();}
+ // fish
+ fish.forEach(f=>{if(!f.alive)return;let bob=Math.sin(elapsed*3+f.phase)*2;ctx.save();ctx.translate(f.x,f.y+bob);ctx.scale(f.vx<0?-1:1,1);ctx.fillStyle=f.type.color;ctx.beginPath();ctx.ellipse(0,0,f.type.size*1.35,f.type.size*.75,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(-f.type.size,0);ctx.lineTo(-f.type.size*1.9,-f.type.size*.7);ctx.lineTo(-f.type.size*1.9,f.type.size*.7);ctx.closePath();ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(f.type.size*.65,-2,3.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#15394a';ctx.beginPath();ctx.arc(f.type.size*.8,-2,1.5,0,Math.PI*2);ctx.fill();ctx.restore();});
+ // obstacles
+ obstacles.forEach(o=>{if(o.type==='rock'){ctx.fillStyle='#6e8790';ctx.beginPath();ctx.ellipse(o.x,o.y,o.r*1.15,o.r*.8,-.15,0,Math.PI*2);ctx.fill();ctx.fillStyle='#a8bac0';ctx.beginPath();ctx.ellipse(o.x-o.r*.25,o.y-o.r*.2,o.r*.48,o.r*.23,-.3,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#4c6973';ctx.lineWidth=3;ctx.stroke();}else{ctx.fillStyle='#177d58';for(let i=-2;i<=2;i++){ctx.beginPath();ctx.ellipse(o.x+i*10,o.y-Math.abs(i)*3,8,o.r*.72,i*.12,0,Math.PI*2);ctx.fill();}ctx.strokeStyle='#9ee0a1';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(o.x,o.y+o.r*.4);ctx.lineTo(o.x+3,o.y-o.r*.7);ctx.stroke();}});
+ // weather effects
+ if(weather==='Rainy'){ctx.strokeStyle='#e4fbff9c';ctx.lineWidth=2;for(let i=0;i<75;i++){let x=(i*67+elapsed*180)%W,y=(i*97+elapsed*270)%H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-7,y+15);ctx.stroke();}}
+ if(weather==='Windy'){ctx.strokeStyle='#e8fffaa0';ctx.lineWidth=2;for(let i=0;i<12;i++){let x=(i*83+elapsed*70)%W,y=river.y+25+(i*29)%(river.h-30);ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+15,y-7,x+31,y);ctx.stroke();}}
+ // rod and line
+ ctx.strokeStyle='#754b28';ctx.lineWidth=8;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(72,468);ctx.lineTo(118,420);ctx.stroke();ctx.strokeStyle='#e9c48c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(118,420);ctx.lineTo(aim.x,aim.y);ctx.stroke();
+ ctx.fillStyle='#ffd166';ctx.beginPath();ctx.arc(aim.x,aim.y,7,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(aim.x,aim.y,13,0,Math.PI*2);ctx.stroke();
+ if(cast){let p=Math.min(1,cast.t/cast.duration),x=110+(cast.tx-110)*p,y=430+(cast.ty-430)*p;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();if(cast.t>=cast.duration){ctx.strokeStyle='#ffffff99';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cast.tx,cast.ty,12+Math.sin(elapsed*5)*4,5,0,0,Math.PI*2);ctx.stroke();}}
+ // aim warning / labels
+ if(state==='playing'&&!validPoint(aim.x,aim.y)){ctx.fillStyle='#7b1624';ctx.font='bold 17px system-ui';ctx.fillText('BLOCKED',aim.x+12,aim.y-12);}
+ ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.fillText('RIVER',river.x+18,river.y+25);
+ particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
+ requestAnimationFrame(draw);
+}
+canvas.addEventListener('pointermove',e=>{if(state!=='playing')return;const r=canvas.getBoundingClientRect();aimAt((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);});
+canvas.addEventListener('pointerdown',e=>{if(state!=='playing')return;if(e.pointerType==='touch'){const r=canvas.getBoundingClientRect();aimAt((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);}});
+$('startBtn').addEventListener('click',reset);$('restartBtn').addEventListener('click',reset);
+$('castBtn').addEventListener('click',()=>bite?catchAttempt():castLine());$('catchBtn').addEventListener('click',catchAttempt);
+$('leftBtn').addEventListener('click',()=>aimAt(aim.x-35,aim.y));$('rightBtn').addEventListener('click',()=>aimAt(aim.x+35,aim.y));
+window.addEventListener('keydown',e=>{
+ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();
+ if(state==='start'&&e.key==='Enter'){reset();return;}
+ if(state==='ended'&&e.key==='Enter'){reset();return;}
+ if(state!=='playing')return;
+ if(e.key==='ArrowLeft')aimAt(aim.x-18,aim.y);if(e.key==='ArrowRight')aimAt(aim.x+18,aim.y);
+ if(e.key==='ArrowUp')aimAt(aim.x,aim.y-18);if(e.key==='ArrowDown')aimAt(aim.x,aim.y+18);
+ if(e.code==='Space'){if(bite)catchAttempt();else castLine();}
+});
+function loop(now){let dt=Math.min(.05,(now-last)/1000||0);last=now;update(dt);requestAnimationFrame(loop);}
+for(let i=0;i<10;i++)spawnFish(true);
+draw();last=performance.now();requestAnimationFrame(loop);
+})();
 </script>
 </body>
-  </html>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fishing Adventure</title>
+<style>
+:root{--ink:#123047;--blue:#087eaa;--deep:#07516f;--gold:#ffd166;--paper:#f4fbff}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(135deg,#dff6ff,#f7fcff);color:var(--ink);min-height:100vh;display:flex;justify-content:center;padding:14px}
+.app{width:min(1100px,100%);margin:auto}
+header{text-align:center;margin:4px 0 12px}
+h1{margin:0;font-size:clamp(1.8rem,4vw,2.7rem);color:#07516f;letter-spacing:.3px}
+.subtitle{margin:2px 0;color:#477086}
+.hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.stat{background:#fff;border:1px solid #c9e8f4;border-radius:12px;padding:9px 11px;box-shadow:0 3px 10px #07516f0c;min-width:0}
+.stat span{display:block;font-size:.76rem;color:#57788a;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.stat strong{font-size:1.15rem;white-space:nowrap}
+.game-wrap{position:relative;background:#fff;border:2px solid #b5e3f2;border-radius:18px;overflow:hidden;box-shadow:0 12px 28px #07516f18}
+canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none;background:#83d9ef}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:#092f45a8;backdrop-filter:blur(3px);z-index:4}
+.panel{width:min(560px,100%);max-height:100%;overflow:auto;background:#fff;border-radius:18px;padding:clamp(16px,3vw,28px);box-shadow:0 15px 40px #002a3c55;text-align:center}
+.panel h2{margin:0 0 8px;font-size:clamp(1.4rem,3vw,2rem);color:#07516f}
+.panel p{line-height:1.45;margin:8px 0}
+.instructions{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left;margin:14px 0}
+.info{background:#effaff;border-radius:10px;padding:10px;font-size:.9rem}
+button{font:inherit;font-weight:800;border:0;border-radius:11px;padding:12px 18px;cursor:pointer;transition:transform .12s,filter .12s;touch-action:manipulation}
+button:hover{filter:brightness(1.04);transform:translateY(-1px)}
+button:focus-visible{outline:3px solid #ffb703;outline-offset:3px}
+.primary{background:#087eaa;color:#fff;box-shadow:0 4px 0 #07516f}
+.secondary{background:#e6f7ff;color:#07516f;border:1px solid #9bd7eb}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px;background:#f5fcff;border-top:1px solid #d7eef7}
+.controls button{min-width:125px}
+#catchBtn{background:#ffd166;color:#513800;display:none}
+#catchBtn.ready{display:inline-block;animation:pulse .8s infinite alternate}
+#castBtn{background:#087eaa;color:white}
+#status{min-height:26px;text-align:center;font-weight:800;color:#07516f;padding:5px 10px 10px}
+.progress-row{display:flex;align-items:center;gap:10px;margin:4px 0 10px;font-size:.88rem}
+.progress{height:9px;flex:1;background:#dceef4;border-radius:99px;overflow:hidden}
+.progress div{height:100%;width:0;background:#f5a623;transition:width .2s}
+.timing{display:none;margin:0 14px 12px;background:#eaf8ff;border-radius:12px;padding:9px 12px}
+.timing.show{display:block}
+.timing-label{font-weight:800;font-size:.86rem;margin-bottom:6px}
+.track{height:18px;background:#b7dce9;border-radius:99px;position:relative;overflow:hidden}
+.zone{position:absolute;top:0;bottom:0;background:#68d391;border:2px solid #16834a;border-radius:5px}
+.needle{position:absolute;top:-3px;bottom:-3px;width:5px;background:#ef476f;border-radius:4px;box-shadow:0 0 0 2px white}
+.footer{text-align:center;font-size:.8rem;color:#628091;margin:10px}
+@keyframes pulse{from{box-shadow:0 0 0 0 #ffd16666}to{box-shadow:0 0 0 7px #ffd16600}}
+@media(max-width:650px){body{padding:7px}.hud{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat{padding:7px 8px}.stat strong{font-size:1rem}.stat span{font-size:.67rem}.instructions{grid-template-columns:1fr}.panel{padding:14px}.controls{gap:7px}.controls button{flex:1;min-width:110px;padding:11px 10px}canvas{aspect-ratio:4/3}}
+</style>
+</head>
+<body>
+<main class="app">
+<header><h1>🎣 Fishing Adventure</h1><p class="subtitle">Read the river. Time your catch. Reach 100 points!</p></header>
+<section class="hud" aria-label="Game statistics">
+ <div class="stat"><span>Score / Goal</span><strong id="score">0 / 100</strong></div>
+ <div class="stat"><span>Time left</span><strong id="timer">60s</strong></div>
+ <div class="stat"><span>Weather</span><strong id="weather">☀️ Sunny</strong></div>
+ <div class="stat"><span>Fish caught</span><strong id="caught">0</strong></div>
+ <div class="stat"><span>Rod level</span><strong id="rod">Basic</strong></div>
+</section>
+<div class="progress-row"><strong id="upgradeText">Rod upgrade: 0 / 5 catches</strong><div class="progress"><div id="upgradeBar"></div></div></div>
+<section class="game-wrap">
+ <canvas id="game" width="960" height="540" aria-label="Fishing river game area"></canvas>
+ <div class="overlay" id="startOverlay">
+  <div class="panel">
+   <h2>Ready for a river adventure?</h2>
+   <p>Earn <b>100 points in 60 seconds</b>. Aim for clear water, watch for a bite, and hit the catch zone at the right moment.</p>
+   <div class="instructions">
+    <div class="info"><b>🎮 Controls</b><br>Mouse: move to aim, click Cast / Catch.<br>Keyboard: arrow keys aim, Space casts or catches.</div>
+    <div class="info"><b>🐟 Fish points</b><br>Small = 5 · Medium = 10 · Rare = 25</div>
+    <div class="info"><b>🌦️ Weather</b><br>Rain tightens the timing zone; wind nudges your aim.</div>
+    <div class="info"><b>🪨 Obstacles & rod</b><br>Rocks/plants block casts. Catch 5 fish to gain 25% more range.</div>
+   </div>
+   <button class="primary" id="startBtn">Start Fishing</button>
+  </div>
+ </div>
+ <div class="overlay" id="resultOverlay" style="display:none">
+  <div class="panel"><h2 id="resultTitle">Game Over</h2><p id="resultMessage"></p>
+   <div class="instructions">
+    <div class="info"><b>Final score</b><br><span id="finalScore">0</span></div>
+    <div class="info"><b>Fish caught</b><br><span id="finalCaught">0</span></div>
+    <div class="info"><b>Highest-value fish</b><br><span id="finalFish">None</span></div>
+    <div class="info"><b>Rod reached</b><br><span id="finalRod">Basic</span></div>
+   </div><button class="primary" id="restartBtn">Restart</button>
+  </div>
+ </div>
+ <div class="controls"><button class="secondary" id="leftBtn" aria-label="Aim left">◀ Aim</button><button class="primary" id="castBtn">🎣 Cast (Space)</button><button class="secondary" id="rightBtn" aria-label="Aim right">Aim ▶</button><button id="catchBtn">🐟 Catch!</button></div>
+ <div class="timing" id="timing"><div class="timing-label" id="timingLabel">Fish biting! Hit the green zone!</div><div class="track"><div class="zone" id="zone"></div><div class="needle" id="needle"></div></div></div>
+ <div id="status" role="status" aria-live="polite">Press Start Fishing to begin.</div>
+</section>
+<p class="footer">Tip: Aim at open water, not through rocks or thick plants. Catching 5 fish unlocks a longer cast.</p>
+</main>
+<script>
+(() => {
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const $=id=>document.getElementById(id);
+const W=960,H=540, river={x:55,y:115,w:850,h:380};
+const obstacles=[
+ {x:190,y:205,r:34,type:'rock'},{x:365,y:385,r:42,type:'plant'},
+ {x:520,y:175,r:38,type:'rock'},{x:700,y:325,r:48,type:'plant'},
+ {x:815,y:205,r:27,type:'rock'},{x:270,y:440,r:25,type:'rock'}
+];
+let state='start',score=0,timeLeft=60,caught=0,rodLevel=1,upgradeCount=0,highestFish='None';
+let weather='Sunny',weatherTimer=0,weatherDuration=9,aim={x:490,y:285},wind=0,cast=null,bite=null,fish=[],particles=[],last=0,elapsed=0,toast='',toastTimer=0;
+const fishTypes=[
+ {name:'Small fish',points:5,color:'#ffe08a',size:10,weight:60,zone:0.30},
+ {name:'Medium fish',points:10,color:'#ff8c69',size:15,weight:30,zone:0.23},
+ {name:'Rare fish',points:25,color:'#c4a1ff',size:19,weight:10,zone:0.16}
+];
+function reset(){
+ state='playing';score=0;timeLeft=60;caught=0;rodLevel=1;upgradeCount=0;highestFish='None';
+ weather='Sunny';weatherTimer=0;weatherDuration=9;aim={x:480,y:270};wind=0;cast=null;bite=null;fish=[];particles=[];elapsed=0;toast='Good luck! Find clear water and cast.';toastTimer=2.4;
+ for(let i=0;i<10;i++)spawnFish(true);
+ $('startOverlay').style.display='none';$('resultOverlay').style.display='none';$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+ updateHud();last=performance.now();
+}
+function spawnFish(initial=false){
+ const type=pickFish();let x=river.x+35+Math.random()*(river.w-70),y=river.y+40+Math.random()*(river.h-80);
+ for(let tries=0;tries<20&&obstacles.some(o=>Math.hypot(x-o.x,y-o.y)<o.r+24);tries++){x=river.x+30+Math.random()*(river.w-60);y=river.y+30+Math.random()*(river.h-60);}
+ fish.push({x,y,vx:(Math.random()<.5?-1:1)*(.35+Math.random()*.6),vy:(Math.random()-.5)*.35,type,phase:Math.random()*6.28,alive:true});
+}
+function pickFish(){let n=Math.random()*100;return fishTypes[n<60?0:n<90?1:2];}
+function updateHud(){
+ $('score').textContent=score+' / 100';$('timer').textContent=Math.ceil(timeLeft)+'s';$('weather').textContent=(weather==='Sunny'?'☀️ ':weather==='Rainy'?'🌧️ ':'💨 ')+weather;
+ $('caught').textContent=caught;$('rod').textContent=rodLevel===1?'Basic':'Pro (+25%)';
+ $('upgradeText').textContent=rodLevel===1?`Rod upgrade: ${upgradeCount} / 5 catches`:'Rod upgraded! +25% range';
+ $('upgradeBar').style.width=(rodLevel===1?upgradeCount/5*100:100)+'%';
+}
+function setToast(t,d=2){toast=t;toastTimer=d;$('status').textContent=t;}
+function validPoint(x,y){
+ if(x<river.x+8||x>river.x+river.w-8||y<river.y+8||y>river.y+river.h-8)return false;
+ return !obstacles.some(o=>Math.hypot(x-o.x,y-o.y)<o.r+13);
+}
+function aimAt(x,y){aim.x=Math.max(river.x+8,Math.min(river.x+river.w-8,x));aim.y=Math.max(river.y+8,Math.min(river.y+river.h-8,y));}
+function castLine(){
+ if(state!=='playing'||cast||bite)return;
+ let target={x:aim.x,y:aim.y};
+ if(weather==='Windy')target.x+=Math.sin(elapsed*3)*18;
+ if(!validPoint(target.x,target.y)){setToast('Blocked! Try another angle.');return;}
+ let range=Math.hypot(target.x-110,target.y-430),maxRange=rodLevel===1?700:875;
+ if(range>maxRange){setToast('Too far! Upgrade your rod or aim closer.');return;}
+ cast={x:110,y:430,tx:target.x,ty:target.y,t:0,duration:.45};
+ setToast('Line cast! Watch for a bite…',1.4);
+}
+function startBite(){
+ if(!cast||bite||cast.t<cast.duration)return;
+ let nearest=fish.filter(f=>f.alive).sort((a,b)=>Math.hypot(a.x-cast.tx,a.y-cast.ty)-Math.hypot(b.x-cast.tx,b.y-cast.ty))[0];
+ if(!nearest||Math.hypot(nearest.x-cast.tx,nearest.y-cast.ty)>125){cast=null;setToast('No bite this time. Try another spot.');return;}
+ let delay=1.1+Math.random()*2.3;
+ bite={fish:nearest,delay,elapsed:0,phase:Math.random()*Math.PI*2,zone:nearest.type.zone*(weather==='Rainy'?.68:1),success:false};
+ cast.waiting=true;setToast('Line in the water… be patient.',1.2);
+}
+function catchAttempt(){
+ if(state!=='playing')return;
+ if(!bite){setToast('No bite yet — cast and wait for the signal.',1.5);return;}
+ if(bite.elapsed<bite.delay){setToast('Too early! Wait for the bite signal.',1.2);return;}
+ const pos=indicatorPosition(),inside=Math.abs(pos-.5)<bite.zone/2;
+ if(inside){
+  let f=bite.fish;score+=f.type.points;caught++;highestFish=f.type.name;f.alive=false;
+  if(rodLevel===1){upgradeCount++;if(upgradeCount>=5){rodLevel=2;setToast('✨ Rod upgraded! Casting range increased by 25%.',3);}else setToast(`Caught ${f.type.name}! +${f.type.points} points.`,1.8);}
+  else setToast(`Caught ${f.type.name}! +${f.type.points} points.`,1.8);
+  burst(cast.tx,cast.ty,f.type.color);bite=null;cast=null;$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+  if(score>=100){score=Math.max(score,100);finish(true);return;}
+  if(fish.filter(f=>f.alive).length<7)spawnFish();
+ }else{
+  score=Math.max(0,score-5);setToast('Missed! The fish escaped. −5 points.',2);bite.fish.alive=true;bite=null;cast=null;
+  $('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+ }
+ updateHud();
+}
+function indicatorPosition(){return (Math.sin((bite.elapsed-bite.delay)*4.1+bite.phase)+1)/2;}
+function finish(win){
+ state='ended';cast=null;bite=null;$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');
+ $('resultTitle').textContent=win?'🏆 You Win!':'Game Over';
+ $('resultMessage').textContent=win?'Amazing fishing! You reached the 100-point goal.':'Time ran out before you reached 100 points. Try a new strategy!';
+ $('finalScore').textContent=score+' points';$('finalCaught').textContent=caught;$('finalFish').textContent=highestFish;$('finalRod').textContent=rodLevel===2?'Pro (+25% range)':'Basic';
+ $('resultOverlay').style.display='flex';updateHud();
+}
+function burst(x,y,color){for(let i=0;i<20;i++)particles.push({x,y,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,life:.5+Math.random()*.5,color});}
+function changeWeather(){weather=['Sunny','Rainy','Windy'][Math.floor(Math.random()*3)];weatherTimer=0;weatherDuration=7+Math.random()*6;wind=(Math.random()-.5)*1.5;setToast(weather==='Rainy'?'Rain! The catch zone is smaller.':weather==='Windy'?'Wind is shifting your cast!':'The sky is clear. Normal conditions.',2);updateHud();}
+function update(dt){
+ if(state!=='playing')return;
+ elapsed+=dt;timeLeft=Math.max(0,timeLeft-dt);weatherTimer+=dt;
+ if(weatherTimer>weatherDuration)changeWeather();
+ if(weather==='Windy'){aim.x+=Math.sin(elapsed*2.2)*wind*dt*7;aim.x=Math.max(river.x+8,Math.min(river.x+river.w-8,aim.x));}
+ fish.forEach(f=>{if(!f.alive)return;f.x+=f.vx*dt*35;f.y+=Math.sin(elapsed*1.8+f.phase)*dt*10;if(f.x<river.x+20||f.x>river.x+river.w-20)f.vx*=-1;if(f.y<river.y+25)f.y=river.y+25;if(f.y>river.y+river.h-25)f.y=river.y+river.h-25;});
+ if(cast){cast.t+=dt;if(cast.t>=cast.duration&&!cast.waiting){cast.t=cast.duration;startBite();}if(cast.waiting&&!bite){cast=null;}}
+ if(bite){bite.elapsed+=dt;if(bite.elapsed>=bite.delay){$('timing').classList.add('show');$('catchBtn').classList.add('ready');$('timingLabel').textContent='🐟 BITE! Press Catch when the red marker is in the green zone!';let zoneW=bite.zone*100;$('zone').style.width=zoneW+'%';$('zone').style.left=(50-zoneW/2)+'%';$('needle').style.left=(indicatorPosition()*100)+'%';if(bite.elapsed>bite.delay+4){score=Math.max(0,score-5);bite.fish.alive=true;bite=null;cast=null;$('timing').classList.remove('show');$('catchBtn').classList.remove('ready');setToast('Too slow! The fish escaped. −5 points.',2);}}}
+ particles=particles.filter(p=>p.life>0);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=dt;});
+ if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('status').textContent=state==='playing'?'Aim for clear water and wait for a bite.':'';}
+ if(timeLeft<=0){finish(false);return;}updateHud();
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ // banks and grass
+ ctx.fillStyle='#8bd18b';ctx.fillRect(0,0,W,H);
+ ctx.fillStyle='#68b96f';for(let i=0;i<95;i++){let x=(i*137)%W,y=(i*79)%H;ctx.beginPath();ctx.ellipse(x,y,3,8,(i%5)*.4,0,Math.PI*2);ctx.fill();}
+ // river
+ let g=ctx.createLinearGradient(0,river.y,0,river.y+river.h);g.addColorStop(0,'#4fc3e4');g.addColorStop(.5,'#1a9ecb');g.addColorStop(1,'#087eaa');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(river.x,river.y,river.w,river.h,42);ctx.fill();
+ // ripples
+ for(let i=0;i<22;i++){let x=(i*91+elapsed*22)%(river.w-30)+river.x+15,y=river.y+30+((i*57)% (river.h-55));ctx.strokeStyle='#c7f5ff66';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(x,y,13+(i%4)*4,3,0,0,Math.PI*2);ctx.stroke();}
+ // fish
+ fish.forEach(f=>{if(!f.alive)return;let bob=Math.sin(elapsed*3+f.phase)*2;ctx.save();ctx.translate(f.x,f.y+bob);ctx.scale(f.vx<0?-1:1,1);ctx.fillStyle=f.type.color;ctx.beginPath();ctx.ellipse(0,0,f.type.size*1.35,f.type.size*.75,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(-f.type.size,0);ctx.lineTo(-f.type.size*1.9,-f.type.size*.7);ctx.lineTo(-f.type.size*1.9,f.type.size*.7);ctx.closePath();ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(f.type.size*.65,-2,3.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#15394a';ctx.beginPath();ctx.arc(f.type.size*.8,-2,1.5,0,Math.PI*2);ctx.fill();ctx.restore();});
+ // obstacles
+ obstacles.forEach(o=>{if(o.type==='rock'){ctx.fillStyle='#6e8790';ctx.beginPath();ctx.ellipse(o.x,o.y,o.r*1.15,o.r*.8,-.15,0,Math.PI*2);ctx.fill();ctx.fillStyle='#a8bac0';ctx.beginPath();ctx.ellipse(o.x-o.r*.25,o.y-o.r*.2,o.r*.48,o.r*.23,-.3,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#4c6973';ctx.lineWidth=3;ctx.stroke();}else{ctx.fillStyle='#177d58';for(let i=-2;i<=2;i++){ctx.beginPath();ctx.ellipse(o.x+i*10,o.y-Math.abs(i)*3,8,o.r*.72,i*.12,0,Math.PI*2);ctx.fill();}ctx.strokeStyle='#9ee0a1';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(o.x,o.y+o.r*.4);ctx.lineTo(o.x+3,o.y-o.r*.7);ctx.stroke();}});
+ // weather effects
+ if(weather==='Rainy'){ctx.strokeStyle='#e4fbff9c';ctx.lineWidth=2;for(let i=0;i<75;i++){let x=(i*67+elapsed*180)%W,y=(i*97+elapsed*270)%H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-7,y+15);ctx.stroke();}}
+ if(weather==='Windy'){ctx.strokeStyle='#e8fffaa0';ctx.lineWidth=2;for(let i=0;i<12;i++){let x=(i*83+elapsed*70)%W,y=river.y+25+(i*29)%(river.h-30);ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+15,y-7,x+31,y);ctx.stroke();}}
+ // rod and line
+ ctx.strokeStyle='#754b28';ctx.lineWidth=8;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(72,468);ctx.lineTo(118,420);ctx.stroke();ctx.strokeStyle='#e9c48c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(118,420);ctx.lineTo(aim.x,aim.y);ctx.stroke();
+ ctx.fillStyle='#ffd166';ctx.beginPath();ctx.arc(aim.x,aim.y,7,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(aim.x,aim.y,13,0,Math.PI*2);ctx.stroke();
+ if(cast){let p=Math.min(1,cast.t/cast.duration),x=110+(cast.tx-110)*p,y=430+(cast.ty-430)*p;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();if(cast.t>=cast.duration){ctx.strokeStyle='#ffffff99';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cast.tx,cast.ty,12+Math.sin(elapsed*5)*4,5,0,0,Math.PI*2);ctx.stroke();}}
+ // aim warning / labels
+ if(state==='playing'&&!validPoint(aim.x,aim.y)){ctx.fillStyle='#7b1624';ctx.font='bold 17px system-ui';ctx.fillText('BLOCKED',aim.x+12,aim.y-12);}
+ ctx.fillStyle='#fff';ctx.font='bold 15px system-ui';ctx.fillText('RIVER',river.x+18,river.y+25);
+ particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
+ requestAnimationFrame(draw);
+}
+canvas.addEventListener('pointermove',e=>{if(state!=='playing')return;const r=canvas.getBoundingClientRect();aimAt((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);});
+canvas.addEventListener('pointerdown',e=>{if(state!=='playing')return;if(e.pointerType==='touch'){const r=canvas.getBoundingClientRect();aimAt((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);}});
+$('startBtn').addEventListener('click',reset);$('restartBtn').addEventListener('click',reset);
+$('castBtn').addEventListener('click',()=>bite?catchAttempt():castLine());$('catchBtn').addEventListener('click',catchAttempt);
+$('leftBtn').addEventListener('click',()=>aimAt(aim.x-35,aim.y));$('rightBtn').addEventListener('click',()=>aimAt(aim.x+35,aim.y));
+window.addEventListener('keydown',e=>{
+ if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();
+ if(state==='start'&&e.key==='Enter'){reset();return;}
+ if(state==='ended'&&e.key==='Enter'){reset();return;}
+ if(state!=='playing')return;
+ if(e.key==='ArrowLeft')aimAt(aim.x-18,aim.y);if(e.key==='ArrowRight')aimAt(aim.x+18,aim.y);
+ if(e.key==='ArrowUp')aimAt(aim.x,aim.y-18);if(e.key==='ArrowDown')aimAt(aim.x,aim.y+18);
+ if(e.code==='Space'){if(bite)catchAttempt();else castLine();}
+});
+function loop(now){let dt=Math.min(.05,(now-last)/1000||0);last=now;update(dt);requestAnimationFrame(loop);}
+for(let i=0;i<10;i++)spawnFish(true);
+draw();last=performance.now();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

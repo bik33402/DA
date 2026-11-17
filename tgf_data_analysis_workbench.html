@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TGF Data Analysis Workbench</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#17243a;--line:#2a3a54;--text:#e8eef8;--muted:#a8b6ca;--accent:#72c4c1;--accent2:#91aef4;--warn:#e8b86c;--danger:#e58b8b;--good:#8ec9a5;--radius:14px;--shadow:0 12px 32px rgba(0,0,0,.22)}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(1000px 500px at 10% -10%,#1b3550 0%,transparent 55%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{padding:26px clamp(16px,4vw,48px) 18px;border-bottom:1px solid var(--line);background:rgba(10,17,29,.74)}
+.eyebrow{color:var(--accent);font-size:.76rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.headrow{display:flex;gap:18px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}h1{font-size:clamp(1.55rem,3vw,2.2rem);margin:5px 0 6px;line-height:1.15}.subtitle{color:var(--muted);max-width:790px;margin:0}.privacy{color:var(--good);font-size:.85rem;border:1px solid #315344;padding:7px 11px;border-radius:999px;white-space:nowrap}
+main{max-width:1480px;margin:auto;padding:22px clamp(12px,3vw,36px) 52px}.steps{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.step{border:1px solid var(--line);background:#101a2b;color:var(--muted);padding:9px 13px;border-radius:9px;cursor:pointer;font-weight:750}.step:hover,.step.active{border-color:var(--accent);color:var(--text);background:#193044}.step small{color:var(--accent);margin-right:5px}.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}.card{background:linear-gradient(180deg,rgba(23,36,58,.95),rgba(17,28,46,.97));border:1px solid var(--line);border-radius:var(--radius);padding:17px;box-shadow:var(--shadow);min-width:0}.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}.span5{grid-column:span 5}.span4{grid-column:span 4}.card h2{margin:0 0 6px;font-size:1.12rem}.card h3{font-size:.98rem;margin:0 0 9px}.hint{margin:0 0 14px;color:var(--muted);font-size:.9rem}.muted{color:var(--muted)}.tiny{font-size:.8rem;color:var(--muted)}
+label{display:block;font-size:.84rem;color:#c6d2e2;font-weight:700;margin:0 0 5px}input,select,textarea,button{font:inherit}input[type="text"],input[type="number"],select,textarea{width:100%;background:#0c1626;border:1px solid #344760;border-radius:9px;color:var(--text);padding:9px 11px;min-height:40px}input:focus,select:focus,textarea:focus{outline:2px solid #72c4c166;border-color:var(--accent)}input[type="file"]{max-width:100%;color:var(--muted)}.field{min-width:0}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.btn{border:1px solid #46627d;background:#1b3048;color:var(--text);padding:9px 13px;border-radius:9px;cursor:pointer;font-weight:750}.btn:hover{filter:brightness(1.13)}.btn.primary{background:#245b61;border-color:#4c9794}.btn.secondary{background:#293d5c;border-color:#526c98}.btn.danger{background:#492b36;border-color:#875160}.btn:disabled{opacity:.45;cursor:not-allowed}.status{border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--muted);background:#0d1829;margin-top:12px}.status.good{color:var(--good);border-color:#315344}.status.warn{color:var(--warn);border-color:#66502f}.status.error{color:#f0a4a4;border-color:#74444b}.statcards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.metric{padding:12px;background:#0e1a2b;border:1px solid var(--line);border-radius:10px;min-width:0}.metric b{display:block;font-size:1.35rem;line-height:1.2;font-variant-numeric:tabular-nums}.metric span{font-size:.78rem;color:var(--muted)}
+.tablewrap{width:100%;overflow:auto;border:1px solid var(--line);border-radius:10px;max-height:500px;background:#0a1423}.tablewrap.compact{max-height:330px}table{border-collapse:collapse;width:100%;font-size:.86rem}th,td{padding:9px 10px;border-bottom:1px solid #253750;text-align:left;vertical-align:top;min-width:100px}th{position:sticky;top:0;background:#1c2c44;color:#dce7f6;z-index:1;font-weight:800}td{white-space:pre-wrap;overflow-wrap:anywhere;color:#d6dfec;max-width:360px}tr:hover td{background:#14243a}.sorthead{cursor:pointer}.sorthead:hover{color:var(--accent)}.tag{display:inline-block;border:1px solid #3a526d;border-radius:999px;padding:2px 7px;font-size:.75rem;color:#cbd8e8}.tag.warn{border-color:#705936;color:#f0c783}.tag.good{border-color:#315d4a;color:#a8d9b8}.empty{color:var(--muted);padding:18px;text-align:center}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}.toolbar .field{flex:1 1 180px}.pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;color:var(--muted);font-size:.85rem}.inlinecheck{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.86rem}.inlinecheck input{accent-color:var(--accent)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}.callout{background:#0c1a2a;border-left:3px solid var(--accent2);padding:10px 12px;border-radius:7px;color:#c4d2e5;font-size:.87rem}.callout.warn{border-color:var(--warn)}.callout.good{border-color:var(--good)}.rulelist{display:grid;gap:9px}.rule{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:9px;padding:10px;background:#101c2e}.rule p{margin:0;font-size:.88rem}.rule .btn{white-space:nowrap}.previewbox{margin-top:12px}.canvaswrap{background:#0b1626;border:1px solid var(--line);border-radius:10px;padding:10px;min-height:320px}canvas{width:100%;height:300px;display:block}.footer{color:#7f91a9;text-align:center;padding:18px;font-size:.8rem}.hidden{display:none!important}
+@media(max-width:900px){.span8,.span7,.span6,.span5,.span4{grid-column:span 12}.fields{grid-template-columns:1fr 1fr}.statcards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.fields,.two-col{grid-template-columns:1fr}.privacy{white-space:normal}.step{flex:1 1 28%;text-align:center;padding:8px 6px}.card{padding:13px}th,td{padding:8px;min-width:90px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="headrow">
+    <div>
+      <div class="eyebrow">TGF · Junior Analyst Workspace</div>
+      <h1>Data Analysis Workbench</h1>
+      <p class="subtitle">A reusable CSV analysis tool for inspecting data quality, calculating statistics, visualising distributions, and exporting a traceable cleaned copy.</p>
+    </div>
+    <div class="privacy">✓ Processed locally in this tab</div>
+  </div>
+</header>
+<main>
+  <nav class="steps" aria-label="Analysis stages">
+    <button class="step active" data-step="t1"><small>T1</small> Upload</button>
+    <button class="step" data-step="t2"><small>T2</small> Explore</button>
+    <button class="step" data-step="t3"><small>T3</small> Data quality</button>
+    <button class="step" data-step="t4"><small>T4</small> Statistics</button>
+    <button class="step" data-step="t5"><small>T5</small> Charts & IQR</button>
+    <button class="step" data-step="t6"><small>T6</small> Export</button>
+  </nav>
+
+  <section class="panel active" id="panel-t1">
+    <div class="grid">
+      <div class="card span5">
+        <h2>T1 · Upload CSV files</h2>
+        <p class="hint">Load one or more CSV files. Each file becomes a separate dataset that you can switch between.</p>
+        <div class="field"><label for="csvFiles">Choose CSV file(s)</label><input id="csvFiles" type="file" accept=".csv,text/csv" multiple /></div>
+        <div class="btnrow" style="margin-top:12px"><button class="btn primary" id="loadFiles">Load selected file(s)</button><button class="btn" id="loadDemo">Load small practice example</button></div>
+        <div id="uploadStatus" class="status">No data loaded yet. Upload a CSV to begin.</div>
+        <div class="callout" style="margin-top:12px">The practice example is synthetic and unrelated to your assignment. It is only for checking that the tool works.</div>
+      </div>
+      <div class="card span7">
+        <h2>Loaded datasets</h2>
+        <p class="hint">Choose the active dataset. Your original imported values are retained separately from working edits.</p>
+        <div class="field"><label for="datasetSelect">Active dataset</label><select id="datasetSelect" disabled><option value="">No datasets loaded</option></select></div>
+        <div class="statcards" id="datasetMetrics"><div class="metric"><b>0</b><span>Rows</span></div><div class="metric"><b>0</b><span>Columns</span></div><div class="metric"><b>0</b><span>Missing cells</span></div><div class="metric"><b>0</b><span>Working changes</span></div></div>
+        <div id="datasetMeta" class="tiny">Dataset details will appear here.</div>
+      </div>
+      <div class="card span12">
+        <h2>Suggested column data types</h2>
+        <p class="hint">Suggestions are based on the values in each column. They are not guaranteed to be correct. You can change a type here; invalid-value checks in T3 and numeric analysis in T4/T5 use the selected type.</p>
+        <div class="tablewrap compact" id="schemaWrap"><div class="empty">Upload a CSV to see its columns and suggested types.</div></div>
+      </div>
+      <div class="card span12">
+        <h2>Record preview</h2>
+        <p class="hint">A preview of the active working dataset. Long descriptions and notes are shown in full; scroll horizontally for wide datasets.</p>
+        <div class="tablewrap" id="t1Preview"><div class="empty">No records to display.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-t2">
+    <div class="card">
+      <h2>T2 · Search, sort, and filter</h2>
+      <p class="hint">Search across all columns, or filter one selected column. Click a column heading to sort. Text cells wrap instead of being shortened.</p>
+      <div class="toolbar">
+        <div class="field"><label for="globalSearch">Search all fields</label><input id="globalSearch" type="text" placeholder="Type a word, ID, phrase, or value" /></div>
+        <div class="field"><label for="filterColumn">Column filter</label><select id="filterColumn"><option value="">Choose a column</option></select></div>
+        <div class="field"><label for="filterValue">Contains</label><input id="filterValue" type="text" placeholder="Filter value" /></div>
+        <button class="btn secondary" id="clearFilters">Clear filters</button>
+      </div>
+      <div id="t2Count" class="tiny" style="margin-bottom:9px">Load a dataset to explore records.</div>
+      <div class="tablewrap" id="t2Table"><div class="empty">No records to display.</div></div>
+      <div class="pagination"><span id="pageInfo">Page 0 of 0</span><div class="btnrow"><button class="btn" id="prevPage" disabled>Previous</button><button class="btn" id="nextPage" disabled>Next</button></div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-t3">
+    <div class="grid">
+      <div class="card span12">
+        <h2>T3 · Data-quality checks</h2>
+        <p class="hint">The checks report patterns for you to inspect. A warning is not automatically proof that a value is wrong.</p>
+        <div class="statcards" id="qualityMetrics"><div class="metric"><b>—</b><span>Exact duplicate rows</span></div><div class="metric"><b>—</b><span>Missing cells</span></div><div class="metric"><b>—</b><span>Invalid typed values</span></div><div class="metric"><b>—</b><span>Conflicting ID values</span></div></div>
+        <div class="fields">
+          <div class="field"><label for="idColumn">ID/key column for conflict check</label><select id="idColumn"><option value="">No ID column selected</option></select></div>
+          <div class="field"><label for="qualityTypeFilter">Show invalid values for type</label><select id="qualityTypeFilter"><option value="all">All selected column types</option></select></div>
+          <div class="field"><label for="qualityLimit">Issue rows to display</label><select id="qualityLimit"><option>10</option><option>25</option><option>50</option><option>100</option></select></div>
+        </div>
+      </div>
+      <div class="card span6">
+        <h3>Invalid values</h3><div id="invalidTable" class="tablewrap compact"><div class="empty">Load a dataset to check typed values.</div></div>
+      </div>
+      <div class="card span6">
+        <h3>Conflicting IDs</h3><div id="conflictTable" class="tablewrap compact"><div class="empty">Select an ID/key column to check conflicts.</div></div>
+      </div>
+      <div class="card span12">
+        <h3>Manual edit</h3>
+        <p class="hint">Choose a record and column, enter a proposed value, preview it, then apply it. The original imported value remains available in the change log.</p>
+        <div class="fields">
+          <div class="field"><label for="editRow">Record (original row number)</label><select id="editRow"><option value="">Choose a record</option></select></div>
+          <div class="field"><label for="editColumn">Column</label><select id="editColumn"><option value="">Choose a column</option></select></div>
+          <div class="field"><label for="editValue">New value</label><input id="editValue" type="text" placeholder="Enter proposed value" /></div>
+        </div>
+        <div class="btnrow" style="margin-top:10px"><button class="btn secondary" id="previewManual">Preview edit</button></div>
+        <div id="manualPreview" class="previewbox"></div>
+      </div>
+      <div class="card span12">
+        <h3>Automatic correction rules</h3>
+        <p class="hint">Each rule first creates a preview. Review the proposed changes before applying. Rules affect the working copy only.</p>
+        <div class="rulelist">
+          <div class="rule"><div><p><b>Trim surrounding whitespace</b></p><span class="tiny">Remove spaces and tabs at the beginning or end of text values.</span></div><button class="btn secondary" data-rule="trim">Preview rule</button></div>
+          <div class="rule"><div><p><b>Normalize common missing markers</b></p><span class="tiny">Convert exact tokens such as N/A, NA, NULL, and — to blank cells. Review before applying because meanings depend on context.</span></div><button class="btn secondary" data-rule="missing">Preview rule</button></div>
+          <div class="rule"><div><p><b>Remove exact duplicate rows</b></p><span class="tiny">Keep the first copy of identical full rows and mark later copies as removed.</span></div><button class="btn secondary" data-rule="duplicates">Preview rule</button></div>
+        </div>
+        <div id="rulePreview" class="previewbox"></div>
+      </div>
+      <div class="card span12">
+        <div class="btnrow" style="justify-content:space-between"><div><h3 style="margin-bottom:2px">Working-copy controls</h3><span class="tiny">Reset discards working edits and restores the imported values for this dataset.</span></div><button class="btn danger" id="resetWorking">Reset working copy</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-t4">
+    <div class="card">
+      <h2>T4 · Descriptive statistics</h2>
+      <p class="hint">Select a column marked numeric in T1. Non-numeric and blank cells are excluded from numeric calculations and counted separately.</p>
+      <div class="fields">
+        <div class="field"><label for="statsColumn">Numeric column</label><select id="statsColumn"><option value="">No numeric columns available</option></select></div>
+        <div class="field"><label for="statsPrecision">Decimal places</label><select id="statsPrecision"><option>2</option><option>3</option><option>4</option><option>6</option></select></div>
+      </div>
+      <div id="statsStatus" class="status">Load a dataset and select a numeric column.</div>
+      <div class="statcards" id="statsMetrics"><div class="metric"><b>—</b><span>Count</span></div><div class="metric"><b>—</b><span>Total</span></div><div class="metric"><b>—</b><span>Mean</span></div><div class="metric"><b>—</b><span>Median</span></div></div>
+      <div class="tablewrap compact" id="statsTable"><div class="empty">Statistics will appear here.</div></div>
+      <div class="callout" style="margin-top:12px">Population standard deviation describes spread when the uploaded values are treated as the whole group being analysed. A sample standard deviation uses a different denominator (n − 1), so do not mix the two.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-t5">
+    <div class="grid">
+      <div class="card span12">
+        <h2>T5 · Charts and IQR outliers</h2>
+        <p class="hint">Numeric columns produce a histogram and an inclusive-quartile IQR check. Text columns produce a frequency chart. The IQR fences are calculated once from all valid numeric values and reused when comparing the full data with the in-fence data.</p>
+        <div class="fields">
+          <div class="field"><label for="chartColumn">Column to visualise</label><select id="chartColumn"><option value="">Choose a column</option></select></div>
+          <div class="field"><label for="chartBins">Histogram bins (numeric only)</label><select id="chartBins"><option>5</option><option selected>8</option><option>10</option><option>12</option><option>15</option><option>20</option></select></div>
+        </div>
+      </div>
+      <div class="card span7">
+        <h3>Distribution chart</h3>
+        <div class="canvaswrap"><canvas id="chartCanvas" width="1000" height="360" aria-label="Data distribution chart"></canvas></div>
+        <div id="chartStatus" class="tiny" style="margin-top:9px">Choose a column to draw a chart.</div>
+      </div>
+      <div class="card span5">
+        <h3>IQR analysis</h3>
+        <div id="iqrSummary" class="status">Choose a numeric column to calculate quartiles and fences.</div>
+        <div class="tablewrap compact" id="iqrTable" style="margin-top:10px"><div class="empty">IQR details will appear here.</div></div>
+      </div>
+      <div class="card span12">
+        <h3>Outlier comparison · same fences</h3>
+        <p class="hint">The “with outliers” and “without outliers” summaries use the same lower and upper fences calculated from the full selected column. Records outside the fences are flagged, not automatically deleted.</p>
+        <div class="tablewrap compact" id="comparisonTable"><div class="empty">Comparison will appear here for numeric data.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-t6">
+    <div class="grid">
+      <div class="card span5">
+        <h2>T6 · Export and audit trail</h2>
+        <p class="hint">Download a cleaned CSV from the working copy and a separate CSV change log. The original imported data is not overwritten.</p>
+        <label class="inlinecheck"><input type="checkbox" id="ensureUnique" checked /> Ensure exported CSV has unique full rows</label>
+        <div class="btnrow" style="margin-top:14px"><button class="btn primary" id="exportClean">Download cleaned CSV</button><button class="btn secondary" id="exportLog">Download change log</button></div>
+        <div class="btnrow" style="margin-top:8px"><button class="btn" id="exportOriginal">Download original CSV</button></div>
+        <div id="exportStatus" class="status">No dataset selected.</div>
+      </div>
+      <div class="card span7">
+        <h2>Change log</h2>
+        <p class="hint">Each applied edit records the original value, new value, method, and reason. Export-time duplicate removal is listed in the exported log as well.</p>
+        <div class="tablewrap compact" id="changeLogTable"><div class="empty">No applied changes yet.</div></div>
+      </div>
+      <div class="card span12">
+        <div class="callout good"><b>Audit reminder:</b> Keep your original file. Before using a corrected value as evidence, check the source or document why the correction is justified. This tool records changes; it cannot verify which value is factually correct.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="footer">TGF Data Analysis Workbench · Local browser tool · No network upload or external library required</div>
+
+<script>
+'use strict';
+const state={datasets:[],activeId:null,step:'t1',page:1,pageSize:50,search:'',filterColumn:'',filterValue:'',sortIndex:null,sortDir:1,stagedRule:null,stagedManual:null};
+const $=id=>document.getElementById(id);
+const MISSING_MARKERS=new Set(['na','n/a','null','none','—','-','(blank)']);
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function parseCSV(text){
+  text=String(text??'').replace(/^\uFEFF/,'');const rows=[];let row=[],field='',quoted=false;
+  for(let i=0;i<text.length;i++){const ch=text[i];
+    if(quoted){if(ch==='"'&&text[i+1]==='"'){field+='"';i++;}else if(ch==='"'){quoted=false;}else{field+=ch;}}
+    else{if(ch==='"'&&field===''){quoted=true;}else if(ch===','){row.push(field);field='';}else if(ch==='\n'){row.push(field.replace(/\r$/,''));field='';rows.push(row);row=[];}else{field+=ch;}}
+  }
+  row.push(field.replace(/\r$/,''));if(row.length>1||row[0]!==''||rows.length===0)rows.push(row);
+  while(rows.length&&rows[rows.length-1].every(v=>String(v).trim()===''))rows.pop();
+  return rows;
+}
+function csvCell(value){const s=String(value??'');return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+function makeCSV(headers,rows){return '\uFEFF'+[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\r\n');}
+function downloadText(name,text,type='text/csv;charset=utf-8'){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function numeric(v){const s=String(v??'').trim();if(!s)return null;if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(s))return null;const n=Number(s);return Number.isFinite(n)?n:null;}
+function looksDate(v){const s=String(v??'').trim();if(!s)return false;if(!/^\d{4}-\d{1,2}-\d{1,2}(?:[T ].*)?$/.test(s)&&!/^\d{1,2}[/-]\d{1,2}[/-]\d{2,4}$/.test(s))return false;return !Number.isNaN(Date.parse(s));}
+function validForType(v,type){const s=String(v??'').trim();if(!s)return true;if(type==='numeric')return numeric(s)!==null;if(type==='date')return looksDate(s);if(type==='boolean')return /^(true|false|yes|no|0|1)$/i.test(s);return true;}
+function inferType(values){const vals=values.map(v=>String(v??'').trim()).filter(Boolean);if(!vals.length)return'text';const ratio=fn=>vals.filter(fn).length/vals.length;if(ratio(v=>numeric(v)!==null)>=.8)return'numeric';if(ratio(looksDate)>=.8)return'date';if(ratio(v=>/^(true|false|yes|no)$/i.test(v))>=.8)return'boolean';return'text';}
+function active(){return state.datasets.find(d=>d.id===state.activeId)||null;}
+function makeDataset(name,parsed){if(!parsed.length)throw new Error('The file appears to be empty.');let headers=parsed[0].map((h,i)=>String(h??'').trim()||`Column ${i+1}`);const width=Math.max(headers.length,...parsed.slice(1).map(r=>r.length));while(headers.length<width)headers.push(`Column ${headers.length+1}`);const rows=parsed.slice(1).map(r=>Array.from({length:width},(_,i)=>String(r[i]??'')));const types=headers.map((_,c)=>inferType(rows.map(r=>r[c])));return{id:'ds_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),name,headers,originalRows:rows.map(r=>r.slice()),rows:rows.map(r=>r.slice()),originalRowNumbers:rows.map((_,i)=>i+2),rowNumbers:rows.map((_,i)=>i+2),types,changes:[],loadedAt:new Date().toISOString()};}
+function missing(v){return String(v??'').trim()==='';}
+function countMissing(ds){let n=0;ds.rows.forEach(r=>r.forEach(v=>{if(missing(v))n++;}));return n;}
+function exactDuplicateIndexes(rows){const seen=new Set(),dups=[];rows.forEach((r,i)=>{const k=JSON.stringify(r);if(seen.has(k))dups.push(i);else seen.add(k);});return dups;}
+function conflictGroups(ds,col){if(col===''||col==null)return[];const groups=new Map();ds.rows.forEach((r,i)=>{const id=String(r[Number(col)]??'').trim();if(!id)return;if(!groups.has(id))groups.set(id,[]);groups.get(id).push({row:r,index:i,rowNo:ds.rowNumbers[i]});});return [...groups.entries()].filter(([id,items])=>new Set(items.map(x=>JSON.stringify(x.row.filter((v,j)=>j!==Number(col))))).size>1).map(([id,items])=>({id,items}));}
+function invalidValues(ds,typeFilter='all'){const out=[];ds.rows.forEach((r,i)=>r.forEach((v,c)=>{const t=ds.types[c]||'text';if(!missing(v)&&t!=='text'&&validForType(v,t)===false&&(typeFilter==='all'||typeFilter===t))out.push({rowNo:ds.rowNumbers[i],index:i,col:c,value:v,type:t});}));return out;}
+function fmt(n,dp=2){if(n===null||n===undefined||!Number.isFinite(n))return'—';return n.toLocaleString(undefined,{maximumFractionDigits:dp,minimumFractionDigits:0});}
+function setStatus(el,msg,kind=''){if(!el)return;el.className='status'+(kind?' '+kind:'');el.textContent=msg;}
+function tableHTML(headers,rows,opts={}){if(!rows.length)return'<div class="empty">No matching records.</div>';let html='<table><thead><tr>';headers.forEach((h,i)=>{html+=opts.sortable?`<th class="sorthead" data-sort="${i}">${esc(h)}${state.sortIndex===i?(state.sortDir===1?' ▲':' ▼'):''}</th>`:`<th>${esc(h)}</th>`;});html+='</tr></thead><tbody>';rows.forEach(r=>{html+='<tr>'+r.map(v=>`<td>${esc(v)}</td>`).join('')+'</tr>';});html+='</tbody></table>';return html;}
+function updateDatasetSelect(){const sel=$('datasetSelect');if(!state.datasets.length){sel.disabled=true;sel.innerHTML='<option value="">No datasets loaded</option>';return;}sel.disabled=false;sel.innerHTML=state.datasets.map(d=>`<option value="${esc(d.id)}" ${d.id===state.activeId?'selected':''}>${esc(d.name)}</option>`).join('');}
+function populateColumnSelect(id,includeAll=false,types=null){const sel=$(id);if(!sel)return;const previous=sel.value;const ds=active();if(!ds){sel.innerHTML='<option value="">No dataset loaded</option>';return;}const opts=ds.headers.map((h,i)=>({h,i})).filter(x=>!types||types.includes(ds.types[x.i]));sel.innerHTML=(includeAll?'<option value="">Choose a column</option>':'')+opts.map(x=>`<option value="${x.i}">${esc(x.h)} (${esc(ds.types[x.i])})</option>`).join('');if(!opts.length)sel.innerHTML='<option value="">No matching columns</option>';else if(opts.some(x=>String(x.i)===previous))sel.value=previous;}
+function renderAll(){const ds=active();updateDatasetSelect();if(!ds){renderEmpty();return;}renderT1(ds);renderT2(ds);renderT3(ds);renderT4(ds);renderT5(ds);renderT6(ds);}
+function renderEmpty(){['schemaWrap','t1Preview','t2Table','invalidTable','conflictTable','statsTable','iqrTable','comparisonTable','changeLogTable'].forEach(id=>$(id).innerHTML='<div class="empty">Load a CSV dataset to use this section.</div>');$('datasetMetrics').innerHTML=['Rows','Columns','Missing cells','Working changes'].map(x=>`<div class="metric"><b>0</b><span>${x}</span></div>`).join('');$('datasetMeta').textContent='Dataset details will appear here.';setStatus($('statsStatus'),'Load a dataset and select a numeric column.');setStatus($('iqrSummary'),'Choose a numeric column to calculate quartiles and fences.');$('chartStatus').textContent='Choose a column to draw a chart.';}
+function renderT1(ds){$('datasetMetrics').innerHTML=[['Rows',ds.rows.length],['Columns',ds.headers.length],['Missing cells',countMissing(ds)],['Working changes',ds.changes.length]].map(([l,v])=>`<div class="metric"><b>${fmt(v,0)}</b><span>${l}</span></div>`).join('');$('datasetMeta').textContent=`File: ${ds.name} · Loaded: ${new Date(ds.loadedAt).toLocaleString()} · Original records: ${ds.originalRows.length}`;
+  const schema=ds.headers.map((h,c)=>[h,`<select data-type-col="${c}" aria-label="Type for ${esc(h)}">${['text','numeric','date','boolean'].map(t=>`<option value="${t}" ${ds.types[c]===t?'selected':''}>${t}</option>`).join('')}</select>`,ds.rows.filter(r=>!missing(r[c])).length,ds.rows.filter(r=>!missing(r[c])&&!validForType(r[c],ds.types[c])).length]);
+  if(schema.length){let html='<table><thead><tr><th>Column</th><th>Selected type</th><th>Non-empty values</th><th>Invalid values for type</th></tr></thead><tbody>';schema.forEach(r=>html+=`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${fmt(r[2],0)}</td><td>${fmt(r[3],0)}</td></tr>`);$('schemaWrap').innerHTML=html+'</tbody></table>';}
+  const preview=ds.rows.slice(0,20).map((r,i)=>[ds.rowNumbers[i],...r]);$('t1Preview').innerHTML=tableHTML(['Original row',...ds.headers],preview);$('schemaWrap').querySelectorAll('[data-type-col]').forEach(sel=>sel.addEventListener('change',e=>{ds.types[Number(e.target.dataset.typeCol)]=e.target.value;renderAll();}));
+}
+function filteredRows(ds){let list=ds.rows.map((r,i)=>({r,i,rowNo:ds.rowNumbers[i]}));const q=state.search.trim().toLowerCase();if(q)list=list.filter(x=>x.r.some(v=>String(v).toLowerCase().includes(q)));if(state.filterColumn!==''&&state.filterValue.trim()){const c=Number(state.filterColumn),f=state.filterValue.toLowerCase();list=list.filter(x=>String(x.r[c]??'').toLowerCase().includes(f));}if(state.sortIndex!==null){const c=state.sortIndex,dir=state.sortDir;list.sort((a,b)=>{if(c===-1)return(a.rowNo-b.rowNo)*dir;const av=String(a.r[c]??''),bv=String(b.r[c]??'');const an=numeric(av),bn=numeric(bv);if(an!==null&&bn!==null)return(an-bn)*dir;return av.localeCompare(bv,undefined,{numeric:true,sensitivity:'base'})*dir;});}return list;}
+function renderT2(ds){$('globalSearch').value=state.search;$('filterValue').value=state.filterValue;$('filterColumn').innerHTML='<option value="">Choose a column</option>'+ds.headers.map((h,i)=>`<option value="${i}" ${String(i)===state.filterColumn?'selected':''}>${esc(h)}</option>`).join('');const list=filteredRows(ds);const pages=Math.max(1,Math.ceil(list.length/state.pageSize));state.page=Math.min(state.page,pages);const start=(state.page-1)*state.pageSize,show=list.slice(start,start+state.pageSize);$('t2Count').textContent=`Showing ${list.length?start+1:0}–${Math.min(start+show.length,list.length)} of ${list.length} matching records · ${ds.rows.length} records in active dataset`;$('t2Table').innerHTML=tableHTML(['Original row',...ds.headers],show.map(x=>[x.rowNo,...x.r]),{sortable:true});$('t2Table').querySelectorAll('[data-sort]').forEach(th=>th.addEventListener('click',()=>{const idx=Number(th.dataset.sort)-1;if(state.sortIndex===idx)state.sortDir*=-1;else{state.sortIndex=idx;state.sortDir=1;}renderT2(ds);}));$('pageInfo').textContent=`Page ${state.page} of ${pages}`;$('prevPage').disabled=state.page<=1;$('nextPage').disabled=state.page>=pages;}
+function renderT3(ds){const dups=exactDuplicateIndexes(ds.rows),miss=countMissing(ds),invalid=invalidValues(ds),idSel=$('idColumn');const previousDataset=idSel.dataset.initialized,previous=previousDataset===ds.id?idSel.value:'';idSel.innerHTML='<option value="">No ID column selected</option>'+ds.headers.map((h,i)=>`<option value="${i}">${esc(h)}</option>`).join('');let auto=ds.headers.findIndex(h=>/(^|[ _-])(id|key|code)$/i.test(h.trim())||/(_id|id)$/i.test(h.trim()));if(previous!=='')idSel.value=previous;else if(previousDataset!==ds.id&&auto>=0)idSel.value=String(auto);idSel.dataset.initialized=ds.id;
+  const conflicts=conflictGroups(ds,idSel.value);$('qualityMetrics').innerHTML=[['Exact duplicate rows',dups.length],['Missing cells',miss],['Invalid typed values',invalid.length],['Conflicting ID values',conflicts.length]].map(([l,v])=>`<div class="metric"><b>${fmt(v,0)}</b><span>${l}</span></div>`).join('');const previousTypeFilter=$('qualityTypeFilter').value||'all';$('qualityTypeFilter').innerHTML='<option value="all">All selected column types</option>'+['numeric','date','boolean'].map(t=>`<option value="${t}" ${previousTypeFilter===t?'selected':''}>${t}</option>`).join('');
+  const typeF=$('qualityTypeFilter').value||'all',lim=Number($('qualityLimit').value||10),bad=invalidValues(ds,typeF).slice(0,lim);$('invalidTable').innerHTML=bad.length?tableHTML(['Original row','Column','Value','Selected type'],bad.map(x=>[x.rowNo,ds.headers[x.col],x.value,x.type])):'<div class="empty">No invalid values under the selected column types.</div>';
+  const cg=conflictGroups(ds,idSel.value).slice(0,lim);$('conflictTable').innerHTML=cg.length?tableHTML(['ID value','Records','Original row numbers'],cg.map(g=>[g.id,g.items.length,g.items.map(x=>x.rowNo).join(', ')])):'<div class="empty">No conflicting IDs detected for the selected column, or no ID/key column is selected.</div>';
+  $('editRow').innerHTML='<option value="">Choose a record</option>'+ds.rowNumbers.map((n,i)=>`<option value="${i}">Record ${n}</option>`).join('');$('editColumn').innerHTML='<option value="">Choose a column</option>'+ds.headers.map((h,i)=>`<option value="${i}">${esc(h)}</option>`).join('');
+}
+function getNumbers(ds,col){return ds.rows.map((r,i)=>({v:numeric(r[col]),rowNo:ds.rowNumbers[i],raw:r[col]})).filter(x=>x.v!==null);}
+function mean(a){return a.length?a.reduce((s,x)=>s+x,0)/a.length:null;}
+function median(a){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;}
+function modes(a){if(!a.length)return[];const f=new Map();a.forEach(x=>f.set(x,(f.get(x)||0)+1));const max=Math.max(...f.values());if(max===1)return[];return [...f.entries()].filter(([v,n])=>n===max).map(([v])=>v).sort((x,y)=>x-y);}
+function stats(a){if(!a.length)return null;const total=a.reduce((s,x)=>s+x,0),avg=total/a.length,sorted=[...a].sort((x,y)=>x-y),min=sorted[0],max=sorted[sorted.length-1],variance=a.reduce((s,x)=>s+(x-avg)**2,0)/a.length;return{count:a.length,total,mean:avg,median:median(a),mode:modes(a),min,max,range:max-min,popStd:Math.sqrt(variance)};}
+function renderT4(ds){populateColumnSelect('statsColumn',false,['numeric']);const c=$('statsColumn').value;if(c===''){setStatus($('statsStatus'),'No numeric column is selected. Set a suitable column to “numeric” in T1, then return here.','warn');$('statsMetrics').innerHTML=['Count','Total','Mean','Median'].map(x=>`<div class="metric"><b>—</b><span>${x}</span></div>`).join('');$('statsTable').innerHTML='<div class="empty">No numeric column available.</div>';return;}const items=getNumbers(ds,Number(c)),a=items.map(x=>x.v),s=stats(a),dp=Number($('statsPrecision').value||2);setStatus($('statsStatus'),`${items.length} valid numeric values used · ${ds.rows.length-items.length} blank or non-numeric values not used.`,items.length?'good':'warn');if(!s){$('statsMetrics').innerHTML=['Count','Total','Mean','Median'].map(x=>`<div class="metric"><b>—</b><span>${x}</span></div>`).join('');$('statsTable').innerHTML='<div class="empty">No valid numeric values are available for this column.</div>';return;}$('statsMetrics').innerHTML=[['Count',s.count],['Total',fmt(s.total,dp)],['Mean',fmt(s.mean,dp)],['Median',fmt(s.median,dp)]].map(([l,v])=>`<div class="metric"><b>${v}</b><span>${l}</span></div>`).join('');const rows=[['Count',s.count],['Total',fmt(s.total,dp)],['Mean',fmt(s.mean,dp)],['Median',fmt(s.median,dp)],['Mode',s.mode.length?s.mode.map(v=>fmt(v,dp)).join(', '):'No repeated mode'],['Minimum',fmt(s.min,dp)],['Maximum',fmt(s.max,dp)],['Range',fmt(s.range,dp)],['Population standard deviation',fmt(s.popStd,dp)]];$('statsTable').innerHTML=tableHTML(['Measure','Result'],rows);}
+function quantileInclusive(values,p){const s=[...values].sort((a,b)=>a-b);if(!s.length)return null;const h=(s.length-1)*p,lo=Math.floor(h),hi=Math.ceil(h);if(lo===hi)return s[lo];return s[lo]+(h-lo)*(s[hi]-s[lo]);}
+function renderT5(ds){populateColumnSelect('chartColumn',true);const c=$('chartColumn').value;if(c===''){$('chartStatus').textContent='Choose a column to draw a chart.';$('iqrSummary').textContent='Choose a numeric column to calculate quartiles and fences.';$('iqrTable').innerHTML='<div class="empty">IQR details will appear here.</div>';$('comparisonTable').innerHTML='<div class="empty">Comparison will appear here for numeric data.</div>';clearCanvas();return;}const col=Number(c),vals=ds.rows.map(r=>r[col]).filter(v=>!missing(v));const isNum=ds.types[col]==='numeric';if(isNum){const nums=getNumbers(ds,col),a=nums.map(x=>x.v),dp=Number($('statsPrecision').value||2);if(!a.length){setStatus($('iqrSummary'),'No valid numeric values are available for this column.','warn');$('iqrTable').innerHTML='<div class="empty">No numeric values to calculate quartiles.</div>';$('comparisonTable').innerHTML='<div class="empty">No numeric values to compare.</div>';$('chartStatus').textContent='No valid numeric values to chart.';clearCanvas();return;}const q1=quantileInclusive(a,.25),q3=quantileInclusive(a,.75),iqr=q3-q1,lo=q1-1.5*iqr,hi=q3+1.5*iqr,out=nums.filter(x=>x.v<lo||x.v>hi),inside=nums.filter(x=>x.v>=lo&&x.v<=hi),full=stats(a),clean=stats(inside.map(x=>x.v));setStatus($('iqrSummary'),`Inclusive quartiles · n = ${a.length} · IQR = ${fmt(iqr,dp)} · ${out.length} value(s) outside the fences.`,'good');$('iqrTable').innerHTML=tableHTML(['Measure','Value'],[['Q1 (25th percentile)',fmt(q1,dp)],['Q3 (75th percentile)',fmt(q3,dp)],['IQR (Q3 − Q1)',fmt(iqr,dp)],['Lower fence (Q1 − 1.5 × IQR)',fmt(lo,dp)],['Upper fence (Q3 + 1.5 × IQR)',fmt(hi,dp)],['Flagged outliers',out.length],['In-fence values',inside.length]]);$('comparisonTable').innerHTML=tableHTML(['Measure','With outliers','Without outliers'],[['Count',full.count,clean.count],['Mean',fmt(full.mean,dp),fmt(clean?.mean,dp)],['Median',fmt(full.median,dp),fmt(clean?.median,dp)],['Minimum',fmt(full.min,dp),fmt(clean?.min,dp)],['Maximum',fmt(full.max,dp),fmt(clean?.max,dp)],['Range',fmt(full.range,dp),fmt(clean?.range,dp)],['Population SD',fmt(full.popStd,dp),fmt(clean?.popStd,dp)]]);$('chartStatus').textContent=`Histogram of ${ds.headers[col]} · ${a.length} valid numeric value(s); ${vals.length-a.length} non-numeric value(s) excluded · outliers are identified in the IQR summary.`;drawHistogram(a,Number($('chartBins').value||8));
+  }else{const freq=new Map();vals.forEach(v=>freq.set(String(v),(freq.get(String(v))||0)+1));const entries=[...freq.entries()].sort((a,b)=>b[1]-a[1]).slice(0,15);drawBars(entries);$('chartStatus').textContent=`Frequency chart of ${ds.headers[col]} · ${vals.length} non-empty values · showing up to 15 most frequent categories.`;setStatus($('iqrSummary'),'IQR outlier analysis applies to numeric values only. Change this column to numeric in T1 only when that type is appropriate.','warn');$('iqrTable').innerHTML='<div class="empty">This selected column is not numeric.</div>';$('comparisonTable').innerHTML='<div class="empty">Numeric comparison is not available for this column.</div>';}}
+function clearCanvas(){const c=$('chartCanvas'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#9fb0c8';ctx.font='16px system-ui';ctx.fillText('Choose a column to display its distribution.',24,42);}
+function drawHistogram(values,bins){const c=$('chartCanvas'),ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);if(!values.length){clearCanvas();return;}const min=Math.min(...values),max=Math.max(...values);let counts=Array(bins).fill(0);let width=(max-min)/bins;if(width===0){counts=[values.length];bins=1;width=1;}else values.forEach(v=>{let i=Math.min(bins-1,Math.floor((v-min)/width));counts[i]++;});drawAxes(ctx,w,h,counts,counts.map((_,i)=>bins===1?String(min):fmt(min+i*width,1)));const left=58,right=24,top=25,bottom=62,plotW=w-left-right,plotH=h-top-bottom,gap=8,bw=plotW/counts.length;counts.forEach((n,i)=>{const bh=n/Math.max(1,...counts)*plotH,x=left+i*bw+gap/2,y=top+plotH-bh;ctx.fillStyle='#5ca9a7';ctx.fillRect(x,y,Math.max(2,bw-gap),bh);ctx.fillStyle='#d8e4f2';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText(String(n),x+(bw-gap)/2,y-6);ctx.save();ctx.translate(x+(bw-gap)/2,top+plotH+18);ctx.rotate(-.42);ctx.fillText(bins===1?fmt(min,1):fmt(min+i*width,1),0,0);ctx.restore();});ctx.fillStyle='#d8e4f2';ctx.textAlign='left';ctx.font='13px system-ui';ctx.fillText('Frequency',10,16);}
+function drawBars(entries){const c=$('chartCanvas'),ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);if(!entries.length){clearCanvas();return;}const max=Math.max(...entries.map(x=>x[1])),left=62,right=22,top=24,bottom=98,plotW=w-left-right,plotH=h-top-bottom,bw=plotW/entries.length;entries.forEach(([label,n],i)=>{const bh=n/max*plotH,x=left+i*bw+6,y=top+plotH-bh;ctx.fillStyle='#839cce';ctx.fillRect(x,y,Math.max(2,bw-12),bh);ctx.fillStyle='#d8e4f2';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText(String(n),x+(bw-12)/2,y-6);ctx.save();ctx.translate(x+(bw-12)/2,top+plotH+15);ctx.rotate(-.55);ctx.fillText(label.length>24?label.slice(0,21)+'…':label,0,0);ctx.restore();});ctx.fillStyle='#d8e4f2';ctx.textAlign='left';ctx.font='13px system-ui';ctx.fillText('Frequency',10,16);}
+function drawAxes(ctx,w,h,counts){const left=58,right=24,top=25,bottom=62,plotW=w-left-right,plotH=h-top-bottom,max=Math.max(1,...counts);ctx.strokeStyle='#52647e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,top+plotH);ctx.lineTo(left+plotW,top+plotH);ctx.stroke();ctx.fillStyle='#9fb0c8';ctx.font='12px system-ui';ctx.textAlign='right';for(let i=0;i<=4;i++){const y=top+plotH-(i/4)*plotH;ctx.fillText(String(Math.round(max*i/4)),left-9,y+4);ctx.strokeStyle='#263a54';ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(left+plotW,y);ctx.stroke();}}
+function renderT6(ds){$('changeLogTable').innerHTML=ds.changes.length?tableHTML(['Time','Original row','Column','Original value','New value','Method','Reason'],ds.changes.slice().reverse().map(x=>[new Date(x.time).toLocaleString(),x.row,x.column,x.original,x.newValue,x.method,x.reason])):'<div class="empty">No applied changes yet. Previewing a rule does not add an entry; applying it does.</div>';}
+function addLog(ds,entry){state.lastExportLog=null;state.lastExportDatasetId=null;ds.changes.push({...entry,time:new Date().toISOString()});}
+function stageRule(rule){const ds=active();if(!ds)return;let changes=[],remove=[];if(rule==='trim'){ds.rows.forEach((r,i)=>r.forEach((v,c)=>{const n=String(v).replace(/^\s+|\s+$/g,'');if(n!==v)changes.push({i,c,old:v,newValue:n,reason:'Remove leading and trailing whitespace.'});}));}
+  if(rule==='missing'){ds.rows.forEach((r,i)=>r.forEach((v,c)=>{if(MISSING_MARKERS.has(String(v).trim().toLowerCase()))changes.push({i,c,old:v,newValue:'',reason:'Normalize a common missing-value marker to a blank cell; verify that the token means missing in this dataset.'});}));}
+  if(rule==='duplicates'){remove=exactDuplicateIndexes(ds.rows);}
+  state.stagedRule={rule,changes,remove};const names={trim:'Trim surrounding whitespace',missing:'Normalize common missing markers',duplicates:'Remove exact duplicate rows'};let html=`<div class="callout"><b>Preview: ${names[rule]}</b><br>${changes.length} cell change(s) proposed; ${remove.length} row(s) proposed for removal. Nothing has been changed yet.</div>`;
+  if(changes.length){html+='<div class="tablewrap compact" style="margin-top:9px"><table><thead><tr><th>Original row</th><th>Column</th><th>Original</th><th>Proposed</th><th>Reason</th></tr></thead><tbody>';changes.slice(0,30).forEach(x=>html+=`<tr><td>${ds.rowNumbers[x.i]}</td><td>${esc(ds.headers[x.c])}</td><td>${esc(x.old)}</td><td>${esc(x.newValue)}</td><td>${esc(x.reason)}</td></tr>`);html+='</tbody></table></div>';if(changes.length>30)html+=`<div class="tiny">Showing first 30 of ${changes.length} proposed edits.</div>`;}
+  if(remove.length){html+='<div class="tablewrap compact" style="margin-top:9px"><table><thead><tr><th>Original row to remove</th><th>Duplicate of</th></tr></thead><tbody>';const firstByKey=new Map();ds.rows.forEach((r,i)=>{const k=JSON.stringify(r);if(!firstByKey.has(k))firstByKey.set(k,ds.rowNumbers[i]);});remove.slice(0,30).forEach(i=>html+=`<tr><td>${ds.rowNumbers[i]}</td><td>${firstByKey.get(JSON.stringify(ds.rows[i]))}</td></tr>`);html+='</tbody></table></div>';}
+  if(!changes.length&&!remove.length)html+='<div class="status good">No changes are proposed by this rule.</div>';
+  html+='<div class="btnrow" style="margin-top:10px"><button class="btn primary" id="applyRule" '+(!changes.length&&!remove.length?'disabled':'')+'>Apply previewed changes</button><button class="btn" id="cancelRule">Cancel preview</button></div>';$('rulePreview').innerHTML=html;$('applyRule')?.addEventListener('click',applyStagedRule);$('cancelRule')?.addEventListener('click',()=>{$('rulePreview').innerHTML='';state.stagedRule=null;});}
+function applyStagedRule(){const ds=active(),st=state.stagedRule;if(!ds||!st)return;const method='Automatic correction rule';const names={trim:'Trim surrounding whitespace',missing:'Normalize common missing markers',duplicates:'Remove exact duplicate rows'};st.changes.forEach(x=>{const rowNo=ds.rowNumbers[x.i];ds.rows[x.i][x.c]=x.newValue;addLog(ds,{row:rowNo,column:ds.headers[x.c],original:x.old,newValue:x.newValue,method,reason:x.reason});});if(st.remove.length){const rm=new Set(st.remove);st.remove.forEach(i=>addLog(ds,{row:ds.rowNumbers[i],column:'(entire row)',original:JSON.stringify(ds.rows[i]),newValue:'(removed)',method,reason:'Remove a later copy of an exact duplicate row; first copy retained.'}));ds.rows=ds.rows.filter((r,i)=>!rm.has(i));ds.rowNumbers=ds.rowNumbers.filter((r,i)=>!rm.has(i));}
+  $('rulePreview').innerHTML='';state.stagedRule=null;renderAll();setStatus($('uploadStatus'),`${names[st.rule]} applied to the working copy. Original imported data is unchanged.`,'good');}
+function previewManual(){const ds=active();if(!ds)return;const i=Number($('editRow').value),c=Number($('editColumn').value),nv=$('editValue').value;if($('editRow').value===''||$('editColumn').value===''){setStatus($('manualPreview'),'Choose both a record and a column first.','warn');return;}const old=ds.rows[i][c];state.stagedManual={i,c,old,newValue:nv};$('manualPreview').innerHTML=`<div class="callout"><b>Proposed edit</b><br>Record ${ds.rowNumbers[i]} · ${esc(ds.headers[c])}<br>Original: <code>${esc(old)}</code><br>New: <code>${esc(nv)}</code></div><div class="btnrow" style="margin-top:9px"><button class="btn primary" id="applyManual">Apply edit</button><button class="btn" id="cancelManual">Cancel</button></div>`;$('applyManual').addEventListener('click',applyManual);$('cancelManual').addEventListener('click',()=>{$('manualPreview').innerHTML='';state.stagedManual=null;});}
+function applyManual(){const ds=active(),x=state.stagedManual;if(!ds||!x)return;ds.rows[x.i][x.c]=x.newValue;addLog(ds,{row:ds.rowNumbers[x.i],column:ds.headers[x.c],original:x.old,newValue:x.newValue,method:'Manual edit',reason:'Value entered and approved by the analyst.'});state.stagedManual=null;$('manualPreview').innerHTML='';renderAll();setStatus($('uploadStatus'),'Manual edit applied to the working copy. The original imported data is unchanged.','good');}
+function resetWorking(){const ds=active();if(!ds)return;if(!confirm('Reset this dataset working copy to the original imported values and clear its change log?'))return;ds.rows=ds.originalRows.map(r=>r.slice());ds.rowNumbers=ds.originalRowNumbers.slice();ds.changes=[];state.stagedRule=null;state.stagedManual=null;$('rulePreview').innerHTML='';$('manualPreview').innerHTML='';renderAll();setStatus($('uploadStatus'),'Working copy restored from the original import.','good');}
+function exportClean(){const ds=active();if(!ds)return;let rows=ds.rows.map(r=>r.slice()),rowNos=ds.rowNumbers.slice(),logs=ds.changes.slice();if($('ensureUnique').checked){const seen=new Map(),keep=[];rows.forEach((r,i)=>{const k=JSON.stringify(r);if(!seen.has(k)){seen.set(k,rowNos[i]);keep.push(i);}else{logs.push({time:new Date().toISOString(),row:rowNos[i],column:'(entire row)',original:JSON.stringify(r),newValue:'(omitted from export)',method:'Export rule',reason:`Ensure unique records: exact duplicate of original row ${seen.get(k)} omitted from exported CSV.`});}});rows=keep.map(i=>rows[i]);}
+  downloadText(safeName(ds.name)+'_cleaned.csv',makeCSV(ds.headers,rows));state.lastExportLog=logs;state.lastExportDatasetId=ds.id;setStatus($('exportStatus'),`Cleaned CSV exported with ${rows.length} record(s). ${ds.rows.length-rows.length} exact duplicate row(s) omitted during export.`,'good');renderT6(ds);}
+function safeName(n){return String(n||'dataset').replace(/\.csv$/i,'').replace(/[^a-z0-9-_]+/gi,'_').replace(/^_+|_+$/g,'')||'dataset';}
+function exportLog(){const ds=active();if(!ds)return;const logs=(state.lastExportDatasetId===ds.id&&state.lastExportLog)?state.lastExportLog:ds.changes;const h=['Time','Original row','Column','Original value','New value','Method','Reason'];const rows=logs.map(x=>[x.time,x.row,x.column,x.original,x.newValue,x.method,x.reason]);downloadText(safeName(ds.name)+'_change_log.csv',makeCSV(h,rows));setStatus($('exportStatus'),`Change log exported (${logs.length} entr${logs.length===1?'y':'ies'}).`,'good');}
+function exportOriginal(){const ds=active();if(!ds)return;downloadText(safeName(ds.name)+'_original.csv',makeCSV(ds.headers,ds.originalRows));setStatus($('exportStatus'),'Original imported values exported unchanged.','good');}
+function loadExample(){const csv='Record ID,Category,Amount,Description,Status\nA-01,North,12.5,Sample entry with a longer description,Open\nA-02,South,18,Another practice record,Closed\nA-03,North,7.5,Third synthetic example,Open\nA-04,East,22,Fourth practice record,Pending\nA-05,South,14,Fifth example for charting,Open\nA-06,West,31,Sixth example with a repeated category,Closed\nA-07,East,9,Seventh sample value,Open\nA-08,West,15,Eighth sample value,Pending\nA-09,North,11,Ninth example,Open\nA-10,South,19,Tenth example,Closed';const ds=makeDataset('practice_example.csv',parseCSV(csv));state.datasets.push(ds);state.activeId=ds.id;renderAll();setStatus($('uploadStatus'),'Synthetic practice dataset loaded. It is not assignment data.','good');}
+async function loadSelectedFiles(){const files=[...$('csvFiles').files];if(!files.length){setStatus($('uploadStatus'),'Choose at least one CSV file first.','warn');return;}let loaded=0;for(const f of files){try{const txt=await f.text();const parsed=parseCSV(txt);const ds=makeDataset(f.name,parsed);state.datasets.push(ds);state.activeId=ds.id;loaded++;}catch(e){setStatus($('uploadStatus'),`Could not load ${f.name}: ${e.message}`,'error');}}if(loaded){renderAll();setStatus($('uploadStatus'),`${loaded} CSV file(s) loaded successfully. Select a dataset above to switch between them.`,'good');}}
+function setStep(s){state.step=s;document.querySelectorAll('.step').forEach(b=>b.classList.toggle('active',b.dataset.step===s));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+s));}
+// Navigation and file loading
+document.querySelectorAll('.step').forEach(b=>b.addEventListener('click',()=>setStep(b.dataset.step)));
+$('loadFiles').addEventListener('click',loadSelectedFiles);$('loadDemo').addEventListener('click',loadExample);$('datasetSelect').addEventListener('change',e=>{state.activeId=e.target.value;state.page=1;state.search='';state.filterColumn='';state.filterValue='';state.sortIndex=null;state.sortDir=1;renderAll();});
+$('globalSearch').addEventListener('input',e=>{state.search=e.target.value;state.page=1;const ds=active();if(ds)renderT2(ds);});$('filterColumn').addEventListener('change',e=>{state.filterColumn=e.target.value;state.page=1;const ds=active();if(ds)renderT2(ds);});$('filterValue').addEventListener('input',e=>{state.filterValue=e.target.value;state.page=1;const ds=active();if(ds)renderT2(ds);});$('clearFilters').addEventListener('click',()=>{state.search='';state.filterColumn='';state.filterValue='';state.sortIndex=null;state.page=1;const ds=active();if(ds)renderT2(ds);});$('prevPage').addEventListener('click',()=>{state.page=Math.max(1,state.page-1);const ds=active();if(ds)renderT2(ds);});$('nextPage').addEventListener('click',()=>{state.page++;const ds=active();if(ds)renderT2(ds);});
+$('idColumn').addEventListener('change',()=>{const ds=active();if(ds)renderT3(ds);});$('qualityTypeFilter').addEventListener('change',()=>{const ds=active();if(ds)renderT3(ds);});$('qualityLimit').addEventListener('change',()=>{const ds=active();if(ds)renderT3(ds);});$('previewManual').addEventListener('click',previewManual);$('resetWorking').addEventListener('click',resetWorking);document.querySelectorAll('[data-rule]').forEach(b=>b.addEventListener('click',()=>stageRule(b.dataset.rule)));
+$('statsColumn').addEventListener('change',()=>{const ds=active();if(ds)renderT4(ds);});$('statsPrecision').addEventListener('change',()=>{const ds=active();if(ds){renderT4(ds);renderT5(ds);}});$('chartColumn').addEventListener('change',()=>{const ds=active();if(ds)renderT5(ds);});$('chartBins').addEventListener('change',()=>{const ds=active();if(ds)renderT5(ds);});$('exportClean').addEventListener('click',exportClean);$('exportLog').addEventListener('click',exportLog);$('exportOriginal').addEventListener('click',exportOriginal);
+renderEmpty();
+</script>
+</body>
+</html>
